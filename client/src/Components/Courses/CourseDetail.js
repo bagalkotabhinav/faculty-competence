@@ -85,10 +85,10 @@ const CourseDetail = () => {
               <ReactMarkdown>{course.description}</ReactMarkdown>
             </div>
             <div>
-              <h3 className="course--detail--title">Estimated Time</h3>
+              <h3 className="course--detail--title">Course Duration</h3>
               <p>{course.estimatedTime}</p>
 
-              <h3 className="course--detail--title">Materials Needed</h3>
+              <h3 className="course--detail--title">Prerequisites</h3>
               <ul className="course--detail--list">
                 <ReactMarkdown>{course.materialsNeeded}</ReactMarkdown>
               </ul>
