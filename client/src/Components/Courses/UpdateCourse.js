@@ -127,10 +127,10 @@ const UpdateCourse = () => {
               <textarea id="courseDescription" name="description" value={description} onChange={onChange}></textarea>
             </div>
             <div>
-              <label htmlFor="estimatedTime">Estimated Time</label>
+              <label htmlFor="estimatedTime">Course Duration</label>
               <input id="estimatedTime" name="estimatedTime" type="text" value={estimatedTime} onChange={onChange} />
 
-              <label htmlFor="materialsNeeded">Materials Needed</label>
+              <label htmlFor="materialsNeeded">Prerequisites</label>
               <textarea id="materialsNeeded" name="materialsNeeded" value={materialsNeeded} onChange={onChange}></textarea>
             </div>
           </div>
