@@ -85,7 +85,7 @@ const ConferenceDetail = () => {
             </div>
             <div>
               <h3 className="course--detail--title">Publication Date</h3>
-              <p>{conference.publicationDate}</p>
+              <p>{new Date(conference.publicationDate).toLocaleDateString('en-CA')}</p>
 
               <h3 className="course--detail--title">Volume</h3>
               <p>{conference.volume}</p>

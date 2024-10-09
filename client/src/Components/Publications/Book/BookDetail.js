@@ -77,7 +77,7 @@ const BookDetail = () => {
             </div>
             <div>
               <h3 className="course--detail--title">Publication Date</h3>
-              <p>{book.publicationDate}</p>
+              <p>{new Date(book.publicationDate).toLocaleDateString('en-CA')}</p>
 
               <h3 className="course--detail--title">Volume</h3>
               <p>{book.volume}</p>

@@ -90,7 +90,7 @@ const EventDetail = () => {
               <p>{event.participationType}</p>
 
               <h3 className="course--detail--title">Event Date</h3>
-              <p>{event.eventDate}</p>
+              <p>{new Date(event.eventDate).toLocaleDateString('en-CA')}</p>
 
               <h3 className="course--detail--title">Event Location</h3>
               <p>{event.location}</p>
