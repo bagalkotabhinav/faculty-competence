@@ -65,16 +65,8 @@ module.exports = (sequelize) => {
         },
         notEmpty: {
           msg: 'Please provide a password.'
-        },
-        validatePassword(val) {
-          if (val.length >= 8 && val.length <= 20) {
-            const hashedPassword = bcrypt.hashSync(val, 10);
-            this.setDataValue('password', hashedPassword);
-          } else {
-            throw new Error('Your password should be between 8 and 20 characters');
-          }
-        },
-      },
+        }
+      }
     },
     affiliation: {
       type: DataTypes.STRING,
@@ -105,7 +97,22 @@ module.exports = (sequelize) => {
         }
       }
     }
-  }, { sequelize });
+  }, {
+  sequelize,
+  hooks: {
+    beforeCreate: (user) => {
+      if (user.password) {
+        user.password = bcrypt.hashSync(user.password, 10);
+      }
+    },
+    beforeUpdate: (user) => {
+      if (user.password) {
+        user.password = bcrypt.hashSync(user.password, 10);
+      }
+    }
+  }
+}
+);
 
   // Association with other models (e.g., Course)
   User.associate = (models) => {

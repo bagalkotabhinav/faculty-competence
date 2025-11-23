@@ -17,7 +17,7 @@ const data = require('./data.json');
   try {
     await sequelize.sync({ force: true });  // DROP + CREATE
 
-    await User.bulkCreate(data.users);
+    await User.bulkCreate(data.users, { individualHooks: true });
 
     await Course.bulkCreate(data.courses);
 
