@@ -1,5 +1,3 @@
-'use strict';
-
 // Load modules
 const express = require('express');
 const morgan = require('morgan');
@@ -12,11 +10,11 @@ const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'tr
 // Import routes
 const userRouter = require('./routes/users');
 const courseRouter = require('./routes/courses');
-const eventRouter = require('./routes/events'); // Import the events router
-const journalRouter = require('./routes/journals'); // Import the events router
-const conferenceRouter = require('./routes/conferences'); // Import the events router
-const bookRouter = require('./routes/books'); // Import the books router
-const patentRouter = require('./routes/patents'); // Import the patents router
+const eventRouter = require('./routes/events');
+const journalRouter = require('./routes/journals'); 
+const conferenceRouter = require('./routes/conferences'); 
+const bookRouter = require('./routes/books'); 
+const patentRouter = require('./routes/patents'); 
 // Create the Express app
 const app = express();
 
@@ -39,11 +37,11 @@ app.get('/', (req, res) => {
 // Add routes
 app.use('/api', userRouter);
 app.use('/api', courseRouter);
-app.use('/api', eventRouter); // Add events route
-app.use('/api', journalRouter); // Add events route
-app.use('/api', conferenceRouter); // Add events route
-app.use('/api', bookRouter); // Add books route
-app.use('/api', patentRouter); // Add patents route
+app.use('/api', eventRouter); 
+app.use('/api', journalRouter); 
+app.use('/api', conferenceRouter); 
+app.use('/api', bookRouter); 
+app.use('/api', patentRouter); 
 
 // Send 404 if no other route matched
 app.use((req, res) => {

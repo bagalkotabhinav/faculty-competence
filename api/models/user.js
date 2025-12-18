@@ -114,14 +114,5 @@ module.exports = (sequelize) => {
 }
 );
 
-  // Association with other models (e.g., Course)
-  User.associate = (models) => {
-    User.hasMany(models.Course, {
-      foreignKey: {
-        fieldName: 'userid'
-      }
-    });
-  }
-
   return User;
 };

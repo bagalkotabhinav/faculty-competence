@@ -1,5 +1,5 @@
 {
-  "name": "techdegree-fullstackjs-rest-api",
+  "name": "faculty-competence-management-system",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -24,7 +24,6 @@
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "mysql2": "^3.15.3",
-    "promise.prototype.finally": "^3.1.2",
     "sequelize": "^6.6.5"
   }
 }
