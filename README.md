@@ -1,6 +1,6 @@
 # Faculty Competence Management System
 
-This project is a Full Stack web application built with React and a REST API. It serves as a platform for faculty members to manage and track their academic achievements and professional activities.
+This project is a Full Stack Web application built with React and a REST API. It serves as a platform for faculty members to manage and track their academic achievements and professional activities.
 
 ## Features
 
