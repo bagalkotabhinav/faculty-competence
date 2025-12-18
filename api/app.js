@@ -32,7 +32,7 @@ app.use(express.json());
 // Setup a friendly greeting for the root route
 app.get('/', (req, res) => {
   res.json({
-    message: 'Welcome to the REST API project!',
+    message: 'Welcome to Faculty Competence Management System!',
   });
 });
 
