@@ -478,8 +478,8 @@ async createEvent(event, username, password) {
  * Get all available books
  * @returns API response if successful
  */
-async getBooks() {
-  const response = await this.api('/books', 'GET', null, false);
+async getBooks(username, password) {
+  const response = await this.api('/books', 'GET', null, true, { username, password });
   if (response.status === 200) {
     return response.json().then(data => data);
   } else {
@@ -492,8 +492,8 @@ async getBooks() {
  * @param {String} id - Book ID
  * @returns API response if successful
  */
-async getBook(id) {
-  const response = await this.api(`/books/${id}`, 'GET', null, false);
+async getBook(id,username,password) {
+  const response = await this.api(`/books/${id}`, 'GET', null, true, {username, password});
   if (response.status === 200) {
     return response.json().then(data => data);
   } else {

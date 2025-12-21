@@ -22,7 +22,12 @@ const app = express();
 app.use(morgan('dev'));
 
 // Setup CORS
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 
 // Setup Express to work with JSON
 app.use(express.json());

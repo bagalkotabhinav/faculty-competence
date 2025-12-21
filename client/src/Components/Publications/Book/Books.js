@@ -14,11 +14,14 @@ const Books = () => {
   const [showFilter, setShowFilter] = useState(false);
   const authUser = context.authenticatedUser;
   let navigate = useNavigate();
-
+  
   useEffect(() => {
-    context.data.getBooks()
+    if (!authUser) return;
+    context.data.getBooks(authUser.emailAddress, authUser.password)
       .then((response) => {
         const userBooks = response.filter(book => book.userid === authUser.id);
+        console.log(authUser.emailAddress);
+        console.log(authUser.password);
         setBooks(userBooks);
         setFilteredBooks(userBooks);
         setIsLoading(false);
@@ -27,7 +30,7 @@ const Books = () => {
         console.error('Error fetching books', error);
         navigate('/error');
       });
-  }, [navigate, context.data, authUser.id]);
+  }, [navigate, context.data, authUser]);
 
   const handleFilter = () => {
     if (!startDate && !endDate) {
