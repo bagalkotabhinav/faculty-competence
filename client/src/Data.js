@@ -1,16 +1,16 @@
 import config from './config';
+import Cookies from 'js-cookie';
 
 export default class Data {
   /**
-   * Function to make Fetch requests to our custom REST API
-   * @param {*} path - route or path to API endpoint e.g. /courses, /users
-   * @param {*} method - e.g. POST, GET
-   * @param {*} body - body of the request (optional)
-   * @param {*} requiresAuth - whether the API request requires authentication
-   * @param {*} credentials - if API request requires authentication, enter in user's credentials (username/email address and password)
-   * @returns {function} Make the Fetch API request
+   * Make a Fetch request to the REST API
+   * @param {String} path - API endpoint path (e.g. /courses, /users)
+   * @param {String} [method='GET'] - HTTP method
+   * @param {Object|null} [body=null] - Request payload
+   * @param {String|null} [token=null] - JWT token for authenticated requests
+   * @returns {Promise<Response>} Fetch API response
    */
-  api(path, method = 'GET', body = null, token = null) {
+  async api(path, method = 'GET', body = null, token = null) {
     const url = config.apiBaseUrl + path;
 
     const options = {
@@ -20,26 +20,34 @@ export default class Data {
       },
     };
 
-    if (body !== null) {
-      options.body = JSON.stringify(body);
-    }
-
+    if (body !== null) options.body = JSON.stringify(body);
     if (token) options.headers.Authorization = `Bearer ${token}`;
 
-    return fetch(url,options);
+    const response = await fetch(url, options);
+
+    // token missing/expired/invalid
+    if ((response.status === 401 || response.status === 403) && path !== '/login') {
+      Cookies.remove('authenticatedUser');
+      window.location.assign('/signin');
+      return response;
+    }
+
+
+    return response;
   }
 
+
   /**
- * Login user and get JWT token
- * @param {String} emailAddress
- * @param {String} password
- * @returns {Object} { user, token } on success, or error message object
- */
+   * Authenticate a user and retrieve a JWT token
+   * @param {String} emailAddress - User email address
+   * @param {String} password - User password
+   * @returns {Promise<Object>} { user, token } on success or error message object
+   */
   async loginUser(emailAddress, password) {
     const response = await this.api('/login', 'POST', { emailAddress, password });
 
     if (response.status === 200) {
-      return response.json().then(data => data); // { user, token }
+      return response.json().then(data => data);
     } else if (response.status === 400 || response.status === 401) {
       return response.json().then(message => message);
     } else {
@@ -47,77 +55,13 @@ export default class Data {
     }
   }
 
-
   /**
-   * Get the user from the database for Sign In
-   * @param {String} username - for Authentication, the user's email address acts as the "username"
-   * @param {String} password 
-   * @returns API response if successful
+   * Retrieve the currently authenticated user
+   * @param {String} token - JWT token
+   * @returns {Promise<Object>} User data or error message
    */
-  async getUser(username, password) {
-    const response = await this.api(`/users`, 'GET', null, true, { username, password });
-    if (response.status === 200) {
-      return response.json().then(data => data);
-    }
-    else if (response.status === 401) {
-      return response.json().then(message => message);
-    }
-    else {
-      throw new Error();
-    }
-  }
-
-  /**
-   * Create a new user in the database
-   * @param {Object} user 
-   * @returns empty response if successful
-   */
-  async createUser(user) {
-    const response = await this.api('/users', 'POST', user);
-    if (response.status === 201) {
-      return [];
-    }
-    else if (response.status === 400) {
-      return response.json().then(data => {
-        return data.errors;
-      });
-    }
-    else {
-      throw new Error();
-    }
-  }
-
-/**
- * Update a particular user
- * @param {String} id - User ID
- * @param {Object} user - with updated firstName, lastName, affiliation, areaOfInterest, homepage, and optionally password
- * @param {String} username - user's email address
- * @param {String} password - user's current password for authentication
- * @returns empty response if successful
- */
-async updateUser(id, user, username, password) {
-  const response = await this.api(`/users/${id}`, 'PUT', user, true, { username, password });
-  if (response.status === 204) {
-    return [];
-  } else if (response.status === 400) {
-    return response.json().then(data => data.errors);
-  } else if (response.status === 401) {
-    throw new Error('Unauthorized access');
-  } else if (response.status === 403) {
-    throw new Error('Forbidden access');
-  } else {
-    throw new Error('Failed to update user');
-  }
-}
-
-
-
-  /**
-   * Get all available courses
-   * @returns API response if successful
-   */
-  async getCourses() {
-    const response = await this.api('/courses', 'GET', null, false);
+  async getUser(token) {
+    const response = await this.api('/users', 'GET', null, token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -126,12 +70,59 @@ async updateUser(id, user, username, password) {
   }
 
   /**
-   * Get a specific course by id
+   * Create a new user
+   * @param {Object} user - User details
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async createUser(user) {
+    const response = await this.api('/users', 'POST', user);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error();
+    }
+  }
+
+  /**
+   * Update an existing user
+   * @param {String} id - User ID
+   * @param {Object} user - Updated user data
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async updateUser(id, user, token) {
+    const response = await this.api(`/users/${id}`, 'PUT', user, token);
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to update user');
+    }
+  }
+
+  /**
+   * Retrieve all courses
+   * @returns {Promise<Object>} List of courses
+   */
+  async getCourses() {
+    const response = await this.api('/courses', 'GET');
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    } else {
+      throw new Error();
+    }
+  }
+
+  /**
+   * Retrieve a course by ID
    * @param {String} id - Course ID
-   * @returns API response if successful
+   * @returns {Promise<Object>} Course data
    */
   async getCourse(id) {
-    const response = await this.api(`/courses/${id}`, 'GET', null, false);
+    const response = await this.api(`/courses/${id}`, 'GET');
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -141,537 +132,448 @@ async updateUser(id, user, username, password) {
 
   /**
    * Create a new course
-   * @param {Object} course - with title, description, estimated time and materials needed
-   * @param {String} username - user's email address
-   * @param {String} password 
-   * @returns empty response if successful
+   * @param {Object} course - Course details
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
    */
-  async createCourse(course, username, password) {
-    const response = await this.api('/courses', 'POST', course, true, { username, password });
+  async createCourse(course, token) {
+    const response = await this.api('/courses', 'POST', course, token);
     if (response.status === 201) {
       return [];
-    }
-    else if (response.status === 400) {
-      return response.json().then(data => {
-        return data.errors;
-      });
-    }
-    else {
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
       throw new Error();
     }
   }
 
   /**
-   * Delete a specific course
-   * Only users who are authors of the course are authorised to delete the course
+   * Delete a course
    * @param {String} id - Course ID
-   * @param {String} username - user's email address
-   * @param {String} password 
-   * @returns empty response if successful
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
    */
-  async deleteCourse(id, username, password) {
-    const response = await this.api(`/courses/${id}`, 'DELETE', null, true, { username, password });
+  async deleteCourse(id, token) {
+    const response = await this.api(`/courses/${id}`, 'DELETE', null, token);
     if (response.status === 204) {
       return [];
-    }
-    else if (response.status === 400) {
-      return response.json().then(data => {
-        return data.errors;
-      });
-    }
-    else {
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
       throw new Error();
     }
   }
 
   /**
-   * Update a particular course
+   * Update an existing course
    * @param {String} id - Course ID
-   * @param {Object} course - with updated title, description, estimated time and materials needed
-   * @param {String} username - user's email address
-   * @param {String} password 
-   * @returns empty response if successful
+   * @param {Object} course - Updated course data
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
    */
-  async updateCourse(id, course, username, password) {
-    const response = await this.api(`/courses/${id}`, 'PUT', course, true, { username, password });
+  async updateCourse(id, course, token) {
+    const response = await this.api(`/courses/${id}`, 'PUT', course, token);
     if (response.status === 204) {
       return [];
-    }
-    else if (response.status === 400) {
-      return response.json().then(data => {
-        return data.errors;
-      });
-    }
-    else {
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
       throw new Error();
     }
   }
 
-  
-
-
-      /**
-     * Get all available events
-     * @returns API response if successful
-     */
-    async getEvents() {
-      const response = await this.api('/events', 'GET', null, false);
-      if (response.status === 200) {
-        return response.json().then(data => data);
-      } else {
-        throw new Error();
-      }
+  /**
+   * Retrieve all events
+   * @returns {Promise<Object>} List of events
+   */
+  async getEvents() {
+    const response = await this.api('/events', 'GET');
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    } else {
+      throw new Error();
     }
+  }
 
-    /**
-     * Get a specific event by id
-     * @param {String} id - Event ID
-     * @returns API response if successful
-     */
-    async getEvent(id) {
-      const response = await this.api(`/events/${id}`, 'GET', null, false);
-      if (response.status === 200) {
-        return response.json().then(data => data);
-      } else {
-        throw new Error();
-      }
+  /**
+   * Retrieve an event by ID
+   * @param {String} id - Event ID
+   * @returns {Promise<Object>} Event data
+   */
+  async getEvent(id) {
+    const response = await this.api(`/events/${id}`, 'GET');
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    } else {
+      throw new Error();
     }
-
-    /**
- * Create a new event
- * @param {Object} event - with event details such as title, description, event type, participation type, event date, and location
- * @param {String} username - user's email address
- * @param {String} password 
- * @returns empty response if successful
- */
-async createEvent(event, username, password) {
-  const response = await this.api('/events', 'POST', event, true, { username, password });
-  if (response.status === 201) {
-    return [];
-  } else if (response.status === 400) {
-    return response.json().then(data => {
-      return data.errors;
-    });
-  } else {
-    console.error('Failed to create event. Status:', response.status);
-    throw new Error('Failed to create event');
   }
-}
 
-
-    /**
-     * Delete a specific event
-     * Only users who created the event are authorized to delete it
-     * @param {String} id - Event ID
-     * @param {String} username - user's email address
-     * @param {String} password 
-     * @returns empty response if successful
-     */
-    async deleteEvent(id, username, password) {
-      const response = await this.api(`/events/${id}`, 'DELETE', null, true, { username, password });
-      if (response.status === 204) {
-        return [];
-      }
-      else if (response.status === 400) {
-        return response.json().then(data => {
-          return data.errors;
-        });
-      }
-      else {
-        throw new Error();
-      }
+  /**
+   * Create a new event
+   * @param {Object} event - Event details
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async createEvent(event, token) {
+    const response = await this.api('/events', 'POST', event, token);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to create event');
     }
+  }
 
-    /**
-     * Update a particular event
-     * @param {String} id - Event ID
-     * @param {Object} event - with updated event details such as title, description, event type, participation type, event date, and location
-     * @param {String} username - user's email address
-     * @param {String} password 
-     * @returns empty response if successful
-     */
-    async updateEvent(id, event, username, password) {
-      const response = await this.api(`/events/${id}`, 'PUT', event, true, { username, password });
-      if (response.status === 204) {
-        return [];
-      }
-      else if (response.status === 400) {
-        return response.json().then(data => {
-          return data.errors;
-        });
-      }
-      else {
-        throw new Error();
-      }
+  /**
+   * Delete an event
+   * @param {String} id - Event ID
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async deleteEvent(id, token) {
+    const response = await this.api(`/events/${id}`, 'DELETE', null, token);
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error();
     }
+  }
 
-
-        /**
-     * Get all available journals
-     * @returns API response if successful
-     */
-    async getJournals() {
-      const response = await this.api('/journals', 'GET', null, false);
-      if (response.status === 200) {
-        return response.json().then(data => data);
-      } else {
-        throw new Error();
-      }
+  /**
+   * Update an existing event
+   * @param {String} id - Event ID
+   * @param {Object} event - Updated event data
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async updateEvent(id, event, token) {
+    const response = await this.api(`/events/${id}`, 'PUT', event, token);
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error();
     }
+  }
 
-    /**
-     * Get a specific journal by id
-     * @param {String} id - Journal ID
-     * @returns API response if successful
-     */
-    async getJournal(id) {
-      const response = await this.api(`/journals/${id}`, 'GET', null, false);
-      if (response.status === 200) {
-        return response.json().then(data => data);
-      } else {
-        throw new Error();
-      }
+  /**
+   * Retrieve all journals
+   * @returns {Promise<Object>} List of journals
+   */
+  async getJournals() {
+    const response = await this.api('/journals', 'GET');
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    } else {
+      throw new Error();
     }
+  }
 
-    /**
-     * Create a new journal entry
-     * @param {Object} journal - with journal details such as title, authors, journal, volume, issue, pages, publication date, publisher
-     * @param {String} username - user's email address
-     * @param {String} password 
-     * @returns empty response if successful
-     */
-    async createJournal(journal, username, password) {
-      const response = await this.api('/journals', 'POST', journal, true, { username, password });
-      if (response.status === 201) {
-        return [];
-      } else if (response.status === 400) {
-        return response.json().then(data => {
-          return data.errors;
-        });
-      } else {
-        console.error('Failed to create journal. Status:', response.status);
-        throw new Error('Failed to create journal');
-      }
+  /**
+   * Retrieve a journal by ID
+   * @param {String} id - Journal ID
+   * @returns {Promise<Object>} Journal data
+   */
+  async getJournal(id) {
+    const response = await this.api(`/journals/${id}`, 'GET');
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    } else {
+      throw new Error();
     }
+  }
 
-    /**
-     * Delete a specific journal
-     * Only users who created the journal are authorized to delete it
-     * @param {String} id - Journal ID
-     * @param {String} username - user's email address
-     * @param {String} password 
-     * @returns empty response if successful
-     */
-    async deleteJournal(id, username, password) {
-      const response = await this.api(`/journals/${id}`, 'DELETE', null, true, { username, password });
-      if (response.status === 204) {
-        return [];
-      }
-      else if (response.status === 400) {
-        return response.json().then(data => {
-          return data.errors;
-        });
-      }
-      else {
-        throw new Error();
-      }
+  /**
+   * Create a new journal entry
+   * @param {Object} journal - Journal details
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async createJournal(journal, token) {
+    const response = await this.api('/journals', 'POST', journal, token);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to create journal');
     }
+  }
 
-    /**
-     * Update a particular journal
-     * @param {String} id - Journal ID
-     * @param {Object} journal - with updated journal details such as title, authors, journal, volume, issue, pages, publication date, publisher
-     * @param {String} username - user's email address
-     * @param {String} password 
-     * @returns empty response if successful
-     */
-    async updateJournal(id, journal, username, password) {
-      const response = await this.api(`/journals/${id}`, 'PUT', journal, true, { username, password });
-      if (response.status === 204) {
-        return [];
-      }
-      else if (response.status === 400) {
-        return response.json().then(data => {
-          return data.errors;
-        });
-      }
-      else {
-        throw new Error();
-      }
+  /**
+   * Delete a journal
+   * @param {String} id - Journal ID
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async deleteJournal(id, token) {
+    const response = await this.api(`/journals/${id}`, 'DELETE', null, token);
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error();
     }
+  }
 
+  /**
+   * Update an existing journal
+   * @param {String} id - Journal ID
+   * @param {Object} journal - Updated journal data
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async updateJournal(id, journal, token) {
+    const response = await this.api(`/journals/${id}`, 'PUT', journal, token);
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error();
+    }
+  }
 
-          /**
-       * Get all available conferences
-       * @returns API response if successful
-       */
-      async getConferences() {
-        const response = await this.api('/conferences', 'GET', null, false);
-        if (response.status === 200) {
-          return response.json().then(data => data);
-        } else {
-          throw new Error('Failed to fetch conferences');
-        }
-      }
+  /**
+   * Retrieve all conferences
+   * @returns {Promise<Object>} List of conferences
+   */
+  async getConferences() {
+    const response = await this.api('/conferences', 'GET');
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    } else {
+      throw new Error('Failed to fetch conferences');
+    }
+  }
 
-      /**
-       * Get a specific conference by id
-       * @param {String} id - Conference ID
-       * @returns API response if successful
-       */
-      async getConference(id) {
-        const response = await this.api(`/conferences/${id}`, 'GET', null, false);
-        if (response.status === 200) {
-          return response.json().then(data => data);
-        } else {
-          throw new Error('Failed to fetch conference');
-        }
-      }
+  /**
+   * Retrieve a conference by ID
+   * @param {String} id - Conference ID
+   * @returns {Promise<Object>} Conference data
+   */
+  async getConference(id) {
+    const response = await this.api(`/conferences/${id}`, 'GET');
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    } else {
+      throw new Error('Failed to fetch conference');
+    }
+  }
 
-      /**
-       * Create a new conference entry
-       * @param {Object} conference - with conference details such as title, authors, conference, volume, issue, pages, publication date
-       * @param {String} username - user's email address
-       * @param {String} password - user's password
-       * @returns empty response if successful
-       */
-      async createConference(conference, username, password) {
-        const response = await this.api('/conferences', 'POST', conference, true, { username, password });
-        if (response.status === 201) {
-          return [];
-        } else if (response.status === 400) {
-          return response.json().then(data => {
-            return data.errors;
-          });
-        } else {
-          console.error('Failed to create conference. Status:', response.status);
-          throw new Error('Failed to create conference');
-        }
-      }
+  /**
+   * Create a new conference entry
+   * @param {Object} conference - Conference details
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async createConference(conference, token) {
+    const response = await this.api('/conferences', 'POST', conference, token);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to create conference');
+    }
+  }
 
-      /**
-       * Delete a specific conference
-       * Only users who created the conference are authorized to delete it
-       * @param {String} id - Conference ID
-       * @param {String} username - user's email address
-       * @param {String} password - user's password
-       * @returns empty response if successful
-       */
-      async deleteConference(id, username, password) {
-        const response = await this.api(`/conferences/${id}`, 'DELETE', null, true, { username, password });
-        if (response.status === 204) {
-          return [];
-        } else if (response.status === 400) {
-          return response.json().then(data => {
-            return data.errors;
-          });
-        } else {
-          throw new Error('Failed to delete conference');
-        }
-      }
+  /**
+   * Delete a conference
+   * @param {String} id - Conference ID
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async deleteConference(id, token) {
+    const response = await this.api(`/conferences/${id}`, 'DELETE', null, token);
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to delete conference');
+    }
+  }
 
-      /**
-       * Update a particular conference
-       * @param {String} id - Conference ID
-       * @param {Object} conference - with updated conference details such as title, authors, conference, volume, issue, pages, publication date
-       * @param {String} username - user's email address
-       * @param {String} password - user's password
-       * @returns empty response if successful
-       */
-      async updateConference(id, conference, username, password) {
-        const response = await this.api(`/conferences/${id}`, 'PUT', conference, true, { username, password });
-        if (response.status === 204) {
-          return [];
-        } else if (response.status === 400) {
-          return response.json().then(data => {
-            return data.errors;
-          });
-        } else {
-          throw new Error('Failed to update conference');
-        }
-      }
+  /**
+   * Update an existing conference
+   * @param {String} id - Conference ID
+   * @param {Object} conference - Updated conference data
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async updateConference(id, conference, token) {
+    const response = await this.api(`/conferences/${id}`, 'PUT', conference, token);
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to update conference');
+    }
+  }
 
-      /**
- * Get all available books
- * @returns API response if successful
- */
-async getBooks(username, password) {
-  const response = await this.api('/books', 'GET', null, true, { username, password });
-  if (response.status === 200) {
-    return response.json().then(data => data);
-  } else {
-    throw new Error('Failed to fetch books');
+  /**
+   * Retrieve all books
+   * @returns {Promise<Object>} List of books
+   */
+  async getBooks() {
+    const response = await this.api('/books', 'GET');
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    } else {
+      throw new Error('Failed to fetch books');
+    }
+  }
+
+  /**
+   * Retrieve a book by ID
+   * @param {String} id - Book ID
+   * @returns {Promise<Object>} Book data
+   */
+  async getBook(id) {
+    const response = await this.api(`/books/${id}`, 'GET');
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    } else {
+      throw new Error('Failed to fetch book');
+    }
+  }
+
+  /**
+   * Create a new book entry
+   * @param {Object} book - Book details
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async createBook(book, token) {
+    const response = await this.api('/books', 'POST', book, token);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to create book');
+    }
+  }
+
+  /**
+   * Delete a book
+   * @param {String} id - Book ID
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async deleteBook(id, token) {
+    const response = await this.api(`/books/${id}`, 'DELETE', null, token);
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to delete book');
+    }
+  }
+
+  /**
+   * Update an existing book
+   * @param {String} id - Book ID
+   * @param {Object} book - Updated book data
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async updateBook(id, book, token) {
+    const response = await this.api(`/books/${id}`, 'PUT', book, token);
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to update book');
+    }
+  }
+
+  /**
+   * Retrieve all patents
+   * @returns {Promise<Object>} List of patents
+   */
+  async getPatents() {
+    const response = await this.api('/patents', 'GET');
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    } else {
+      throw new Error('Failed to fetch patents');
+    }
+  }
+
+  /**
+   * Retrieve a patent by ID
+   * @param {String} id - Patent ID
+   * @returns {Promise<Object>} Patent data
+   */
+  async getPatent(id) {
+    const response = await this.api(`/patents/${id}`, 'GET');
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    } else {
+      throw new Error('Failed to fetch patent');
+    }
+  }
+
+  /**
+   * Create a new patent entry
+   * @param {Object} patent - Patent details
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async createPatent(patent, token) {
+    const response = await this.api('/patents', 'POST', patent, token);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to create patent');
+    }
+  }
+
+  /**
+   * Delete a patent
+   * @param {String} id - Patent ID
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async deletePatent(id, token) {
+    const response = await this.api(`/patents/${id}`, 'DELETE', null, token);
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to delete patent');
+    }
+  }
+
+  /**
+   * Update an existing patent
+   * @param {String} id - Patent ID
+   * @param {Object} patent - Updated patent data
+   * @param {String} token - JWT token
+   * @returns {Promise<Array>} Empty array on success or validation errors
+   */
+  async updatePatent(id, patent, token) {
+    const response = await this.api(`/patents/${id}`, 'PUT', patent, token);
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then(data => data.errors);
+    } else {
+      throw new Error('Failed to update patent');
+    }
   }
 }
-
-/**
- * Get a specific book by id
- * @param {String} id - Book ID
- * @returns API response if successful
- */
-async getBook(id,username,password) {
-  const response = await this.api(`/books/${id}`, 'GET', null, true, {username, password});
-  if (response.status === 200) {
-    return response.json().then(data => data);
-  } else {
-    throw new Error('Failed to fetch book');
-  }
-}
-
-/**
- * Create a new book entry
- * @param {Object} book - with book details such as title, authors, volume, pages, publication date
- * @param {String} username - user's email address
- * @param {String} password - user's password
- * @returns empty response if successful
- */
-async createBook(book, username, password) {
-  const response = await this.api('/books', 'POST', book, true, { username, password });
-  if (response.status === 201) {
-    return [];
-  } else if (response.status === 400) {
-    return response.json().then(data => {
-      return data.errors;
-    });
-  } else {
-    console.error('Failed to create book. Status:', response.status);
-    throw new Error('Failed to create book');
-  }
-}
-
-/**
- * Delete a specific book
- * Only users who created the book are authorized to delete it
- * @param {String} id - Book ID
- * @param {String} username - user's email address
- * @param {String} password - user's password
- * @returns empty response if successful
- */
-async deleteBook(id, username, password) {
-  const response = await this.api(`/books/${id}`, 'DELETE', null, true, { username, password });
-  if (response.status === 204) {
-    return [];
-  } else if (response.status === 400) {
-    return response.json().then(data => {
-      return data.errors;
-    });
-  } else {
-    throw new Error('Failed to delete book');
-  }
-}
-
-/**
- * Update a particular book
- * @param {String} id - Book ID
- * @param {Object} book - with updated book details such as title, authors, volume, pages, publication date
- * @param {String} username - user's email address
- * @param {String} password - user's password
- * @returns empty response if successful
- */
-async updateBook(id, book, username, password) {
-  const response = await this.api(`/books/${id}`, 'PUT', book, true, { username, password });
-  if (response.status === 204) {
-    return [];
-  } else if (response.status === 400) {
-    return response.json().then(data => {
-      return data.errors;
-    });
-  } else {
-    throw new Error('Failed to update book');
-  }
-}
-
-
-
-/**
- * Get all available patents
- * @returns API response if successful
- */
-async getPatents() {
-  const response = await this.api('/patents', 'GET', null, false);
-  if (response.status === 200) {
-    return response.json().then(data => data);
-  } else {
-    throw new Error('Failed to fetch patents');
-  }
-}
-
-/**
- * Get a specific patent by id
- * @param {String} id - Patent ID
- * @returns API response if successful
- */
-async getPatent(id) {
-  const response = await this.api(`/patents/${id}`, 'GET', null, false);
-  if (response.status === 200) {
-    return response.json().then(data => data);
-  } else {
-    throw new Error('Failed to fetch patent');
-  }
-}
-
-/**
- * Create a new patent entry
- * @param {Object} patent - with patent details such as title, inventors, publicationDate, patentOffice, patentNumber, applicationNumber
- * @param {String} username - user's email address
- * @param {String} password - user's password
- * @returns empty response if successful
- */
-async createPatent(patent, username, password) {
-  const response = await this.api('/patents', 'POST', patent, true, { username, password });
-  if (response.status === 201) {
-    return [];
-  } else if (response.status === 400) {
-    return response.json().then(data => {
-      return data.errors;
-    });
-  } else {
-    console.error('Failed to create patent. Status:', response.status);
-    throw new Error('Failed to create patent');
-  }
-}
-
-/**
- * Delete a specific patent
- * Only users who created the patent are authorized to delete it
- * @param {String} id - Patent ID
- * @param {String} username - user's email address
- * @param {String} password - user's password
- * @returns empty response if successful
- */
-async deletePatent(id, username, password) {
-  const response = await this.api(`/patents/${id}`, 'DELETE', null, true, { username, password });
-  if (response.status === 204) {
-    return [];
-  } else if (response.status === 400) {
-    return response.json().then(data => {
-      return data.errors;
-    });
-  } else {
-    throw new Error('Failed to delete patent');
-  }
-}
-
-/**
- * Update a particular patent
- * @param {String} id - Patent ID
- * @param {Object} patent - with updated patent details such as title, inventors, publicationDate, patentOffice, patentNumber, applicationNumber
- * @param {String} username - user's email address
- * @param {String} password - user's password
- * @returns empty response if successful
- */
-async updatePatent(id, patent, username, password) {
-  const response = await this.api(`/patents/${id}`, 'PUT', patent, true, { username, password });
-  if (response.status === 204) {
-    return [];
-  } else if (response.status === 400) {
-    return response.json().then(data => {
-      return data.errors;
-    });
-  } else {
-    throw new Error('Failed to update patent');
-  }
-}
-
-}
-
