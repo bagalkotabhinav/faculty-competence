@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models').Event;
 const User = require('../models').User;
-const { authenticateUser } = require('../middleware/auth-user');
+// const { authenticateUser } = require('../middleware/auth-user');
+const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return all events
@@ -43,7 +44,7 @@ router.get('/events/:id', asyncHandler(async (req, res) => {
   }
 }));
 
-router.post('/events', authenticateUser, asyncHandler(async (req, res) => {
+router.post('/events', authenticateJwt, asyncHandler(async (req, res) => {
   try {
     const newEvent = await Event.create(req.body);
     res.status(201)
@@ -62,7 +63,7 @@ router.post('/events', authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 // Update an existing event
-router.put("/events/:id", authenticateUser, asyncHandler(async (req, res, next) => {
+router.put("/events/:id", authenticateJwt, asyncHandler(async (req, res, next) => {
   const user = req.currentUser;
   let event;
   try {
@@ -89,7 +90,7 @@ router.put("/events/:id", authenticateUser, asyncHandler(async (req, res, next) 
 }));
 
 // Delete an existing event
-router.delete("/events/:id", authenticateUser, asyncHandler(async (req, res, next) => {
+router.delete("/events/:id", authenticateJwt, asyncHandler(async (req, res, next) => {
   const user = req.currentUser;
   const event = await Event.findByPk(req.params.id);
   if (event) {

@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Patent = require('../models').Patent;
 const User = require('../models').User;
-const { authenticateUser } = require('../middleware/auth-user');
+// const { authenticateUser } = require('../middleware/auth-user');
+const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return all patents
@@ -44,7 +45,7 @@ router.get('/patents/:id', asyncHandler(async (req, res) => {
 }));
 
 // Create a new patent
-router.post('/patents', authenticateUser, asyncHandler(async (req, res) => {
+router.post('/patents', authenticateJwt, asyncHandler(async (req, res) => {
   try {
     const newPatent = await Patent.create(req.body);
     res.status(201)
@@ -61,7 +62,7 @@ router.post('/patents', authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 // Update an existing patent
-router.put("/patents/:id", authenticateUser, asyncHandler(async (req, res) => {
+router.put("/patents/:id", authenticateJwt, asyncHandler(async (req, res) => {
   const user = req.currentUser;
   let patent = await Patent.findByPk(req.params.id);
   if (patent) {
@@ -86,7 +87,7 @@ router.put("/patents/:id", authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 // Delete an existing patent
-router.delete("/patents/:id", authenticateUser, asyncHandler(async (req, res) => {
+router.delete("/patents/:id", authenticateJwt, asyncHandler(async (req, res) => {
   const user = req.currentUser;
   const patent = await Patent.findByPk(req.params.id);
   if (patent) {

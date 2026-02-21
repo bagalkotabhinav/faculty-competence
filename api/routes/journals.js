@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Journal = require('../models').Journal;
 const User = require('../models').User;
-const { authenticateUser } = require('../middleware/auth-user');
+// const { authenticateUser } = require('../middleware/auth-user');
+const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return all journals
@@ -44,7 +45,7 @@ router.get('/journals/:id', asyncHandler(async (req, res) => {
 }));
 
 // Create a new journal
-router.post('/journals', authenticateUser, asyncHandler(async (req, res) => {
+router.post('/journals', authenticateJwt, asyncHandler(async (req, res) => {
   try {
     const newJournal = await Journal.create(req.body);
     res.status(201)
@@ -63,7 +64,7 @@ router.post('/journals', authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 // Update an existing journal
-router.put('/journals/:id', authenticateUser, asyncHandler(async (req, res) => {
+router.put('/journals/:id', authenticateJwt, asyncHandler(async (req, res) => {
   const user = req.currentUser;
   let journal;
   try {
@@ -89,7 +90,7 @@ router.put('/journals/:id', authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 // Delete an existing journal
-router.delete('/journals/:id', authenticateUser, asyncHandler(async (req, res) => {
+router.delete('/journals/:id', authenticateJwt, asyncHandler(async (req, res) => {
   const user = req.currentUser;
   const journal = await Journal.findByPk(req.params.id);
   if (journal) {

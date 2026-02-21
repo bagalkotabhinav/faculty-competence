@@ -3,7 +3,8 @@ const express = require('express');
 const router = express.Router();
 const Course = require('../models').Course;
 const User = require('../models').User;
-const { authenticateUser } = require('../middleware/auth-user');
+// const { authenticateUser } = require('../middleware/auth-user');
+const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return all courses
@@ -45,7 +46,7 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
 }));
 
 // Create a course
-router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
+router.post('/courses', authenticateJwt, asyncHandler(async (req, res) => {
   try {
     const newCourse = await Course.create(req.body);
     res.status(201)
@@ -63,7 +64,7 @@ router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 // Update an existing course
-router.put("/courses/:id", authenticateUser, asyncHandler(async (req, res, next) => {
+router.put("/courses/:id", authenticateJwt, asyncHandler(async (req, res, next) => {
   const user = req.currentUser;
   let course;
   try {
@@ -90,7 +91,7 @@ router.put("/courses/:id", authenticateUser, asyncHandler(async (req, res, next)
 }));
 
 // Delete an existing course
-router.delete("/courses/:id", authenticateUser, asyncHandler(async (req, res, next) => {
+router.delete("/courses/:id", authenticateJwt, asyncHandler(async (req, res, next) => {
   const user = req.currentUser;
   const course = await Course.findByPk(req.params.id);
   if (course) {

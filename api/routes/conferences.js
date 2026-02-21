@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Conference = require('../models').Conference;
 const User = require('../models').User;
-const { authenticateUser } = require('../middleware/auth-user');
+// const { authenticateUser } = require('../middleware/auth-user');
+const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return all conferences
@@ -44,7 +45,7 @@ router.get('/conferences/:id', asyncHandler(async (req, res) => {
 }));
 
 // Create a new conference
-router.post('/conferences', authenticateUser, asyncHandler(async (req, res) => {
+router.post('/conferences', authenticateJwt, asyncHandler(async (req, res) => {
   try {
     const newConference = await Conference.create(req.body);
     res.status(201)
@@ -63,7 +64,7 @@ router.post('/conferences', authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 // Update an existing conference
-router.put("/conferences/:id", authenticateUser, asyncHandler(async (req, res, next) => {
+router.put("/conferences/:id", authenticateJwt, asyncHandler(async (req, res, next) => {
   const user = req.currentUser;
   let conference;
   try {
@@ -90,7 +91,7 @@ router.put("/conferences/:id", authenticateUser, asyncHandler(async (req, res, n
 }));
 
 // Delete an existing conference
-router.delete("/conferences/:id", authenticateUser, asyncHandler(async (req, res, next) => {
+router.delete("/conferences/:id", authenticateJwt, asyncHandler(async (req, res, next) => {
   const user = req.currentUser;
   const conference = await Conference.findByPk(req.params.id);
   if (conference) {

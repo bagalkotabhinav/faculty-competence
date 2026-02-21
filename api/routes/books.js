@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 const Book = require('../models').Book;
 const User = require('../models').User;
-const { authenticateUser } = require('../middleware/auth-user');
+// const { authenticateUser } = require('../middleware/auth-user');
+const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return all books
-router.get('/books', authenticateUser,asyncHandler(async (req, res) => {
+router.get('/books', authenticateJwt,asyncHandler(async (req, res) => {
   let books = await Book.findAll({
     attributes: {
       exclude: ['createdAt', 'updatedAt']
@@ -22,7 +23,7 @@ router.get('/books', authenticateUser,asyncHandler(async (req, res) => {
 }));
 
 // Return a specific book
-router.get('/books/:id', authenticateUser, asyncHandler(async (req, res) => {
+router.get('/books/:id', authenticateJwt, asyncHandler(async (req, res) => {
   const book = await Book.findByPk(req.params.id, {
     attributes: {
       exclude: ['createdAt', 'updatedAt']
@@ -44,7 +45,7 @@ router.get('/books/:id', authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 // Create a new book
-router.post('/books', authenticateUser, asyncHandler(async (req, res) => {
+router.post('/books', authenticateJwt, asyncHandler(async (req, res) => {
   try {
     const newBook = await Book.create(req.body);
     res.status(201)
@@ -61,7 +62,7 @@ router.post('/books', authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 // Update an existing book
-router.put("/books/:id", authenticateUser, asyncHandler(async (req, res) => {
+router.put("/books/:id", authenticateJwt, asyncHandler(async (req, res) => {
   const user = req.currentUser;
   let book = await Book.findByPk(req.params.id);
   if (book) {
@@ -86,7 +87,7 @@ router.put("/books/:id", authenticateUser, asyncHandler(async (req, res) => {
 }));
 
 // Delete an existing book
-router.delete("/books/:id", authenticateUser, asyncHandler(async (req, res) => {
+router.delete("/books/:id", authenticateJwt, asyncHandler(async (req, res) => {
   const user = req.currentUser;
   const book = await Book.findByPk(req.params.id);
   if (book) {

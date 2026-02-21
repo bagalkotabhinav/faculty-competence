@@ -10,7 +10,7 @@ export default class Data {
    * @param {*} credentials - if API request requires authentication, enter in user's credentials (username/email address and password)
    * @returns {function} Make the Fetch API request
    */
-  api(path, method = 'GET', body = null, requiresAuth = false, credentials = null) {
+  api(path, method = 'GET', body = null, token = null) {
     const url = config.apiBaseUrl + path;
 
     const options = {
@@ -24,12 +24,29 @@ export default class Data {
       options.body = JSON.stringify(body);
     }
 
-    if (requiresAuth) {
-      const encodedCredentials = btoa(`${credentials.username}:${credentials.password}`);
-      options.headers['Authorization'] = `Basic ${encodedCredentials}`;
-    }
+    if (token) options.headers.Authorization = `Bearer ${token}`;
+
     return fetch(url,options);
   }
+
+  /**
+ * Login user and get JWT token
+ * @param {String} emailAddress
+ * @param {String} password
+ * @returns {Object} { user, token } on success, or error message object
+ */
+  async loginUser(emailAddress, password) {
+    const response = await this.api('/login', 'POST', { emailAddress, password });
+
+    if (response.status === 200) {
+      return response.json().then(data => data); // { user, token }
+    } else if (response.status === 400 || response.status === 401) {
+      return response.json().then(message => message);
+    } else {
+      throw new Error('Login request failed');
+    }
+  }
+
 
   /**
    * Get the user from the database for Sign In

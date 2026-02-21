@@ -32,38 +32,42 @@ export class Provider extends Component {
     );
   }
 
-  /**
-   * Signs the user in by retrieving the user's details, setting the authenticatedUser state and browser cookies
-   * @param {String} emailAddress 
-   * @param {String} password 
-   * @returns {Object} user
+    /**
+   * Sign in with JWT login route
+   * @param {String} emailAddress
+   * @param {String} password
+   * @returns {Object} authenticated user object (with token) or error object
    */
   signIn = async (emailAddress, password) => {
-    const user = await this.data.getUser(emailAddress, password);
-    if (user !== null && user.id) {
-      this.setState(() => {
-        return {
-          authenticatedUser: { ...user, ...{ password } }
-        };
-      });
-      Cookies.set('authenticatedUser', JSON.stringify({ ...user, ...{ password } }), { expires: 1 });
-    }
-    return user;
-  }
+    const result = await this.data.loginUser(emailAddress, password);
+    // result on success: { user: {...}, token: "..." }
 
-  /**
-   * Updates the authenticated user after they modify their information.
-   * This will update both the state and the cookies.
-   * @param {Object} updatedUser - The updated user object
+    if (result?.user?.id && result?.token) {
+      const authenticatedUser = {
+        ...result.user,
+        token: result.token,
+      };
+
+      this.setState({ authenticatedUser });
+      Cookies.set('authenticatedUser', JSON.stringify(authenticatedUser), { expires: 1 });
+
+      return authenticatedUser; // keeps response.id behavior working
+    }
+
+    return result; // backend error message object
+  };
+
+    /**
+   * Update authenticated user fields, keep existing token
+   * @param {Object} updatedUser
    */
   updateAuthenticatedUser = (updatedUser) => {
-    this.setState(() => {
-      return {
-        authenticatedUser: updatedUser,
-      };
-    });
-    Cookies.set('authenticatedUser', JSON.stringify(updatedUser), { expires: 1 });
-  }
+    const token = this.state.authenticatedUser?.token || null;
+    const authenticatedUser = { ...updatedUser, token };
+
+    this.setState({ authenticatedUser });
+    Cookies.set('authenticatedUser', JSON.stringify(authenticatedUser), { expires: 1 });
+  };
 
   /**
    * Signs the user out by setting a null authenticated user and removing cookies

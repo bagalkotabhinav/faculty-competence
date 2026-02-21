@@ -2,11 +2,12 @@ const express = require('express');
 
 const router = express.Router();
 const User = require('../models').User;
-const { authenticateUser } = require('../middleware/auth-user');
+// const { authenticateUser } = require('../middleware/auth-user');
+const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return the list of users
-router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
+router.get('/users', authenticateJwt, asyncHandler(async (req, res) => {
   const user = req.currentUser;
 
   const userResult = await User.findOne({
@@ -41,7 +42,7 @@ router.post('/users', asyncHandler(async (req, res) => {
 
 
 // Update an existing user
-router.put("/users/:id", authenticateUser, asyncHandler(async (req, res, next) => {
+router.put("/users/:id", authenticateJwt, asyncHandler(async (req, res, next) => {
   const authenticatedUser = req.currentUser;
   const { id } = req.params;
   
