@@ -58,15 +58,17 @@ router.put("/users/:id", authenticateJwt, asyncHandler(async (req, res, next) =>
     }
 
     // Only update fields that are provided in the request body
-    const updatableFields = ['designation', 'firstName', 'lastName', 'affiliation', 'areasOfInterest', 'homepage', 'emailAddress', 'password'];
+    const updatableFields = ['designation', 'firstName', 'lastName', 'affiliation', 'areasOfInterest', 'homepage', 'emailAddress'];
     const updates = {};
     
     updatableFields.forEach(field => {
-      if (req.body[field]) {
+      if (req.body[field]!==undefined) {
         updates[field] = req.body[field];
       }
     });
-
+    if (typeof req.body.password === 'string' && req.body.password.trim() !== '') {
+  updates.password = req.body.password;
+}
     await targetUser.update(updates);
     res.status(204).end();
   } catch (error) {

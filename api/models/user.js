@@ -106,7 +106,7 @@ module.exports = (sequelize) => {
       }
     },
     beforeUpdate: (user) => {
-      if (user.password) {
+      if (user.changed('password') && user.password) {
         user.password = bcrypt.hashSync(user.password, 10);
       }
     }
