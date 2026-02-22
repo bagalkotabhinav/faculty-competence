@@ -20,6 +20,7 @@ const UpdateConference = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     const controller = new AbortController();
     context.data.getConference(id,authUser.token)
       .then((response) => {
@@ -50,7 +51,7 @@ const UpdateConference = () => {
       });
     // Clean up to prevent memory leak
     return () => controller?.abort();
-  }, [authUser.id, id, navigate, context.data]);
+  }, [authUser.id, authUser.token, id, navigate, context.data]);
 
   const onChange = (event) => {
     const name = event.target.name;

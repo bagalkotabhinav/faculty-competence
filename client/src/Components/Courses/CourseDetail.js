@@ -14,6 +14,7 @@ const CourseDetail = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     // Fetch the course details from the database
     const controller = new AbortController();
     context.data.getCourse(id,authUser.token)
@@ -34,7 +35,7 @@ const CourseDetail = () => {
       });
     // Clean up to prevent memory leak
     return () => controller?.abort();
-  }, [id, navigate, context.data]);
+  }, [id, navigate, context.data, authUser.token]);
 
   const handleDelete = (event) => {
     event.preventDefault();

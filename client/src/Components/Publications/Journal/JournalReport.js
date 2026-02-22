@@ -34,6 +34,7 @@ const JournalReport = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     context.data.getJournals(authUser.token)
       .then((response) => {
         const userJournals = response.filter(journal => journal.userid === authUser.id);
@@ -44,7 +45,7 @@ const JournalReport = () => {
         console.error('Error fetching journals', error);
         navigate('/error');
       });
-  }, [navigate, context.data, authUser.id]);
+  }, [navigate, context.data, authUser.id, authUser.token]);
 
   useEffect(() => {
     const handleBeforePrint = () => {

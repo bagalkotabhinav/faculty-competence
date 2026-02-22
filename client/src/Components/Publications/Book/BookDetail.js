@@ -13,7 +13,7 @@ const BookDetail = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    if (!authUser) return;
+    if (!authUser?.token) return;
     const controller = new AbortController();
     context.data.getBook(id,authUser.token)
       .then(response => {
@@ -31,7 +31,7 @@ const BookDetail = () => {
         setIsLoading(false);
       });
     return () => controller?.abort();
-  }, [id, navigate, context.data,authUser]);
+  }, [id, navigate, context.data, authUser.id, authUser.token]);
 
   const handleDelete = (event) => {
     event.preventDefault();

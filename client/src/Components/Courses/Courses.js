@@ -11,6 +11,7 @@ const Courses = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     // Fetch courses
     context.data.getCourses(authUser.token)
       .then((response) => {
@@ -22,7 +23,7 @@ const Courses = () => {
         console.error('Error fetching courses', error);
         navigate('/error');
       });
-  }, [navigate, context.data, authUser.id]);
+  }, [navigate, context.data, authUser.id, authUser.token]);
 
   // Loading state
   if (isLoading) {

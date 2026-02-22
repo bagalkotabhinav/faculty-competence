@@ -16,6 +16,7 @@ const Journals = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     // Fetch journals
     context.data.getJournals(authUser.token)
       .then((response) => {
@@ -28,7 +29,7 @@ const Journals = () => {
         console.error('Error fetching journals', error);
         navigate('/error');
       });
-  }, [navigate, context.data, authUser.id]);
+  }, [navigate, context.data, authUser.id, authUser.token]);
 
   const handleFilter = () => {
     if (!startDate && !endDate) {

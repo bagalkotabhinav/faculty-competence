@@ -14,6 +14,7 @@ const EventDetail = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     // Fetch the event details from the database
     const controller = new AbortController();
     context.data.getEvent(id,authUser.token)
@@ -34,7 +35,7 @@ const EventDetail = () => {
       });
     // Clean up to prevent memory leak
     return () => controller?.abort();
-  }, [id, navigate, context.data]);
+  }, [id, navigate, context.data, authUser.token]);
 
   const handleDelete = (event) => {
     event.preventDefault();

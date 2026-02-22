@@ -34,6 +34,7 @@ const BookReport = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     context.data.getBooks(authUser.token)
       .then((response) => {
         const userBooks = response.filter(book => book.userid === authUser.id);
@@ -44,7 +45,7 @@ const BookReport = () => {
         console.error('Error fetching books', error);
         navigate('/error');
       });
-  }, [navigate, context.data, authUser.id]);
+  }, [navigate, context.data, authUser.id, authUser.token]);
 
   useEffect(() => {
     const handleBeforePrint = () => {

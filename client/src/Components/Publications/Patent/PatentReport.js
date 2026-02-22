@@ -34,6 +34,7 @@ const PatentReport = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     context.data.getPatents(authUser.token)
       .then((response) => {
         const userPatents = response.filter(patent => patent.userid === authUser.id);
@@ -44,7 +45,7 @@ const PatentReport = () => {
         console.error('Error fetching patents', error);
         navigate('/error');
       });
-  }, [navigate, context.data, authUser.id]);
+  }, [navigate, context.data, authUser.id, authUser.token]);
 
   useEffect(() => {
     const handleBeforePrint = () => {

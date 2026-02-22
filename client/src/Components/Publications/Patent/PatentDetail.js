@@ -13,6 +13,7 @@ const PatentDetail = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     const controller = new AbortController();
     context.data.getPatent(id,authUser.token)
       .then(response => {
@@ -30,7 +31,7 @@ const PatentDetail = () => {
         setIsLoading(false);
       });
     return () => controller?.abort();
-  }, [id, navigate, context.data]);
+  }, [id, navigate, context.data, authUser.token]);
 
   const handleDelete = (event) => {
     event.preventDefault();

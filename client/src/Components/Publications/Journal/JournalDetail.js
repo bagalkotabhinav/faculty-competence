@@ -13,6 +13,7 @@ const JournalDetail = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     // Fetch the journal details from the database
     const controller = new AbortController();
     context.data.getJournal(id,authUser.token)
@@ -33,7 +34,7 @@ const JournalDetail = () => {
       });
     // Clean up to prevent memory leak
     return () => controller?.abort();
-  }, [id, navigate, context.data]);
+  }, [id, navigate, context.data, authUser.token]);
 
   const handleDelete = (event) => {
     event.preventDefault();

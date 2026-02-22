@@ -16,6 +16,7 @@ const Events = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     // Fetch events
     context.data.getEvents(authUser.token)
       .then((response) => {
@@ -28,7 +29,7 @@ const Events = () => {
         console.error('Error fetching events', error);
         navigate('/error');
       });
-  }, [navigate, context.data, authUser.id]);
+  }, [navigate, context.data, authUser.id, authUser.token]);
 
   const handleFilter = () => {
     if (!startDate && !endDate) {

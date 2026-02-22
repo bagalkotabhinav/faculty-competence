@@ -16,6 +16,7 @@ const Patents = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     context.data.getPatents(authUser.token)
       .then((response) => {
         const filteredPatents = response.filter(patent => patent.userid === authUser.id);
@@ -27,7 +28,7 @@ const Patents = () => {
         console.error('Error fetching patents', error);
         navigate('/error');
       });
-  }, [navigate, context.data, authUser.id]);
+  }, [navigate, context.data, authUser.id, authUser.token]);
 
   const handleFilter = () => {
     if (!startDate && !endDate) {

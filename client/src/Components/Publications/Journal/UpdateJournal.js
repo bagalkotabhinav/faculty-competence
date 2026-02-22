@@ -21,6 +21,7 @@ const UpdateJournal = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     const controller = new AbortController();
     context.data.getJournal(id,authUser.token)
       .then((response) => {
@@ -52,7 +53,7 @@ const UpdateJournal = () => {
       });
     // Clean up to prevent memory leak
     return () => controller?.abort();
-  }, [authUser.id, id, navigate, context.data]);
+  }, [authUser.id, authUser.token, id, navigate, context.data]);
 
   const onChange = (event) => {
     const name = event.target.name;

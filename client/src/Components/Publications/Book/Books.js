@@ -16,7 +16,7 @@ const Books = () => {
   let navigate = useNavigate();
   
   useEffect(() => {
-    if (!authUser) return;
+    if (!authUser?.token) return;
     context.data.getBooks(authUser.token)
       .then((response) => {
         const userBooks = response.filter(book => book.userid === authUser.id);
@@ -28,7 +28,7 @@ const Books = () => {
         console.error('Error fetching books', error);
         navigate('/error');
       });
-  }, [navigate, context.data, authUser]);
+  }, [navigate, context.data, authUser.id, authUser.token]);
 
   const handleFilter = () => {
     if (!startDate && !endDate) {

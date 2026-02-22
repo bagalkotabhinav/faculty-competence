@@ -33,6 +33,7 @@ const UpdatePatent = () => {
   ];
 
   useEffect(() => {
+    if (!authUser?.token) return;
     const controller = new AbortController();
     context.data.getPatent(id,authUser.token)
       .then((response) => {
@@ -59,7 +60,7 @@ const UpdatePatent = () => {
         setIsLoading(false);
       });
     return () => controller?.abort();
-  }, [authUser.id, id, navigate, context.data]);
+  }, [authUser.id, authUser.token, id, navigate, context.data]);
 
   const onChange = (event) => {
     const { name, value } = event.target;

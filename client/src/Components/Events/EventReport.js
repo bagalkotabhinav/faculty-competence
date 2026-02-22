@@ -34,6 +34,7 @@ const EventReport = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     context.data.getEvents(authUser.token)
       .then((response) => {
         const userEvents = response.filter(event => event.userid === authUser.id);
@@ -44,7 +45,7 @@ const EventReport = () => {
         console.error('Error fetching events', error);
         navigate('/error');
       });
-  }, [navigate, context.data, authUser.id]);
+  }, [navigate, context.data, authUser.id, authUser.token]);
 
   useEffect(() => {
     const handleBeforePrint = () => {

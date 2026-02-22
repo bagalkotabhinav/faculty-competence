@@ -16,6 +16,7 @@ const Conferences = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if (!authUser?.token) return;
     context.data.getConferences(authUser.token)
       .then((response) => {
         const userConferences = response.filter(conference => conference.userid === authUser.id);
@@ -27,7 +28,7 @@ const Conferences = () => {
         console.error('Error fetching conferences', error);
         navigate('/error');
       });
-  }, [navigate, context.data, authUser.id]);
+  }, [navigate, context.data, authUser.id, authUser.token]);
 
   const handleFilter = () => {
     if (!startDate && !endDate) {
