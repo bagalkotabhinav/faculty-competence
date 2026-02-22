@@ -68,14 +68,6 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    // 6. Return user (safe fields only) + token
-    console.log('LOGIN USER PAYLOAD:', {
-      areasOfInterest: user.areasOfInterest,
-      homepage: user.homepage,
-      affiliation: user.affiliation,
-      firstName: user.firstName
-    });
-
     res.json({
       user: {
         id: user.id,

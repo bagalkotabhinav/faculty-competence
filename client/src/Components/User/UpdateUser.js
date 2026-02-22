@@ -22,7 +22,6 @@ const UpdateUser = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    console.log('Context:', context); // Debug log
 
     const fetchUser = async () => {
       try {

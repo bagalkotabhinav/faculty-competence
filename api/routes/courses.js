@@ -7,9 +7,20 @@ const User = require('../models').User;
 const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
+const COURSE_FIELDS = ['title', 'description', 'estimatedTime', 'materialsNeeded'];
+
+const pick = (body, fields) => {
+  const out = {};
+  for (const f of fields) {
+    if (body[f] !== undefined) out[f] = body[f];
+  }
+  return out;
+};
+
 // Return all courses
 router.get('/courses', authenticateJwt, asyncHandler(async (req, res) => {
   let courses = await Course.findAll({
+    where: { userid: req.currentUser.id },
     attributes: {
       exclude: ['createdAt', 'updatedAt']
     },
@@ -25,7 +36,8 @@ router.get('/courses', authenticateJwt, asyncHandler(async (req, res) => {
 
 // Return a specific course
 router.get('/courses/:id', authenticateJwt, asyncHandler(async (req, res) => {
-  const course = await Course.findByPk(req.params.id, {
+  const course = await Course.findOne({
+    where: { id: req.params.id, userid: req.currentUser.id },
     attributes: {
       exclude: ['createdAt', 'updatedAt']
     },
@@ -39,7 +51,7 @@ router.get('/courses/:id', authenticateJwt, asyncHandler(async (req, res) => {
   if (course) {
     res.json(course);
   } else {
-    res.json({
+    res.status(404).json({
       "error": "Sorry, we couldn't find the course you were looking for."
     });
   }
@@ -48,7 +60,9 @@ router.get('/courses/:id', authenticateJwt, asyncHandler(async (req, res) => {
 // Create a course
 router.post('/courses', authenticateJwt, asyncHandler(async (req, res) => {
   try {
-    const newCourse = await Course.create(req.body);
+    const payload = pick(req.body, COURSE_FIELDS);
+    payload.userid = req.currentUser.id;
+    const newCourse = await Course.create(payload);
     res.status(201)
       .location(`/courses/${newCourse.dataValues.id}`)
       .end();
@@ -65,17 +79,17 @@ router.post('/courses', authenticateJwt, asyncHandler(async (req, res) => {
 
 // Update an existing course
 router.put("/courses/:id", authenticateJwt, asyncHandler(async (req, res, next) => {
-  const user = req.currentUser;
   let course;
   try {
-    course = await Course.findByPk(req.params.id);
-    if (course) {
-      if (course.userid === user.id) {
-        await course.update(req.body);
-        res.status(204).end();
-      } else {
-        res.status(403).json({ error: 'You are not authorised to update this course.' });
+    course = await Course.findOne(
+      {
+        where: { id: req.params.id, userid: req.currentUser.id }
       }
+    );
+    if (course) {
+      const updates = pick(req.body, COURSE_FIELDS);
+      await course.update(updates);
+      res.status(204).end();
     } else {
       const err = new Error(`Course Not Found`);
       res.status(404).json({ error: err.message });
@@ -92,15 +106,14 @@ router.put("/courses/:id", authenticateJwt, asyncHandler(async (req, res, next) 
 
 // Delete an existing course
 router.delete("/courses/:id", authenticateJwt, asyncHandler(async (req, res, next) => {
-  const user = req.currentUser;
-  const course = await Course.findByPk(req.params.id);
-  if (course) {
-    if (course.userid === user.id) {
-      await course.destroy();
-      res.status(204).end();
-    } else {
-      res.status(403).json({ error: 'You are not authorised to delete this course.' });
+  const course = await Course.findOne(
+    {
+      where: { id: req.params.id, userid: req.currentUser.id }
     }
+  );
+  if (course) {
+    await course.destroy();
+    res.status(204).end();
   } else {
     const err = new Error(`Course Not Found`);
     res.status(404).json({ error: err.message });

@@ -6,9 +6,20 @@ const User = require('../models').User;
 const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
+const CONFERENCE_FIELDS = ['title', 'authors', 'publicationDate', 'conference', 'volume', 'issue', 'pages'];
+
+const pick = (body, fields) => {
+  const out = {};
+  for (const f of fields) {
+    if (body[f] !== undefined) out[f] = body[f];
+  }
+  return out;
+};
+
 // Return all conferences
 router.get('/conferences', authenticateJwt, asyncHandler(async (req, res) => {
   let conferences = await Conference.findAll({
+    where: { userid: req.currentUser.id },
     attributes: {
       exclude: ['createdAt', 'updatedAt']
     },
@@ -24,7 +35,8 @@ router.get('/conferences', authenticateJwt, asyncHandler(async (req, res) => {
 
 // Return a specific conference
 router.get('/conferences/:id', authenticateJwt, asyncHandler(async (req, res) => {
-  const conference = await Conference.findByPk(req.params.id, {
+  const conference = await Conference.findOne({
+    where: { id: req.params.id, userid: req.currentUser.id },
     attributes: {
       exclude: ['createdAt', 'updatedAt']
     },
@@ -38,7 +50,7 @@ router.get('/conferences/:id', authenticateJwt, asyncHandler(async (req, res) =>
   if (conference) {
     res.json(conference);
   } else {
-    res.json({
+    res.status(404).json({
       "error": "Sorry, we couldn't find the conference you were looking for."
     });
   }
@@ -47,7 +59,9 @@ router.get('/conferences/:id', authenticateJwt, asyncHandler(async (req, res) =>
 // Create a new conference
 router.post('/conferences', authenticateJwt, asyncHandler(async (req, res) => {
   try {
-    const newConference = await Conference.create(req.body);
+    const payload = pick(req.body, CONFERENCE_FIELDS);
+    payload.userid = req.currentUser.id;
+    const newConference = await Conference.create(payload);
     res.status(201)
       .location(`/conferences/${newConference.dataValues.id}`)
       .end();
@@ -65,17 +79,17 @@ router.post('/conferences', authenticateJwt, asyncHandler(async (req, res) => {
 
 // Update an existing conference
 router.put("/conferences/:id", authenticateJwt, asyncHandler(async (req, res, next) => {
-  const user = req.currentUser;
   let conference;
   try {
-    conference = await Conference.findByPk(req.params.id);
-    if (conference) {
-      if (conference.userid === user.id) {
-        await conference.update(req.body);
-        res.status(204).end();
-      } else {
-        res.status(403).json({ error: 'You are not authorised to update this conference.' });
+    conference = await Conference.findOne(
+      {
+        where: { id: req.params.id, userid: req.currentUser.id }
       }
+    );
+    if (conference) {
+      const updates = pick(req.body, CONFERENCE_FIELDS);
+      await conference.update(updates);
+      res.status(204).end();
     } else {
       const err = new Error(`Conference Not Found`);
       res.status(404).json({ error: err.message });
@@ -92,15 +106,14 @@ router.put("/conferences/:id", authenticateJwt, asyncHandler(async (req, res, ne
 
 // Delete an existing conference
 router.delete("/conferences/:id", authenticateJwt, asyncHandler(async (req, res, next) => {
-  const user = req.currentUser;
-  const conference = await Conference.findByPk(req.params.id);
-  if (conference) {
-    if (conference.userid === user.id) {
-      await conference.destroy();
-      res.status(204).end();
-    } else {
-      res.status(403).json({ error: 'You are not authorised to delete this conference.' });
+  const conference = await Conference.findOne(
+    {
+      where: { id: req.params.id, userid: req.currentUser.id }
     }
+  );
+  if (conference) {
+    await conference.destroy();
+    res.status(204).end();
   } else {
     const err = new Error(`Conference Not Found`);
     res.status(404).json({ error: err.message });
