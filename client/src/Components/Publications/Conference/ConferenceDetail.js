@@ -15,7 +15,7 @@ const ConferenceDetail = () => {
   useEffect(() => {
     // Fetch the conference details from the database
     const controller = new AbortController();
-    context.data.getConference(id)
+    context.data.getConference(id,authUser.token)
       .then(response => {
         if (response.id) {
           setConferenceDetail(response);
@@ -37,7 +37,7 @@ const ConferenceDetail = () => {
 
   const handleDelete = (event) => {
     event.preventDefault();
-    context.data.deleteConference(id, authUser.emailAddress, authUser.password)
+    context.data.deleteConference(id, authUser.token)
       .then((response) => {
         // If the conference is successfully deleted, navigate to the conference list
         if (response.length) {

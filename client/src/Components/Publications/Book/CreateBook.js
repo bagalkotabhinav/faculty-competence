@@ -51,7 +51,7 @@ const CreateBook = () => {
       userid: authUser.id,
     };
 
-    context.data.createBook(bookData, authUser.emailAddress, authUser.password)
+    context.data.createBook(bookData, authUser.token)
       .then(errors => {
         if (errors.length) {
           setErrors(errors);

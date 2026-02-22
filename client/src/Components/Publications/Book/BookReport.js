@@ -34,7 +34,7 @@ const BookReport = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    context.data.getBooks()
+    context.data.getBooks(authUser.token)
       .then((response) => {
         const userBooks = response.filter(book => book.userid === authUser.id);
         setBooks(userBooks);

@@ -66,7 +66,7 @@ const CreateJournal = () => {
       userid: authUser.id,
     };
 
-    context.data.createJournal(journalData, authUser.emailAddress, authUser.password)
+    context.data.createJournal(journalData, authUser.token)
       .then(errors => {
         if (errors.length) {
           setErrors(errors);

@@ -7,7 +7,7 @@ const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return all journals
-router.get('/journals', asyncHandler(async (req, res) => {
+router.get('/journals', authenticateJwt, asyncHandler(async (req, res) => {
   let journals = await Journal.findAll({
     attributes: {
       exclude: ['createdAt', 'updatedAt']
@@ -23,7 +23,7 @@ router.get('/journals', asyncHandler(async (req, res) => {
 }));
 
 // Return a specific journal
-router.get('/journals/:id', asyncHandler(async (req, res) => {
+router.get('/journals/:id', authenticateJwt, asyncHandler(async (req, res) => {
   const journal = await Journal.findByPk(req.params.id, {
     attributes: {
       exclude: ['createdAt', 'updatedAt']

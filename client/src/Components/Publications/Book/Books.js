@@ -17,11 +17,9 @@ const Books = () => {
   
   useEffect(() => {
     if (!authUser) return;
-    context.data.getBooks(authUser.emailAddress, authUser.password)
+    context.data.getBooks(authUser.token)
       .then((response) => {
         const userBooks = response.filter(book => book.userid === authUser.id);
-        console.log(authUser.emailAddress);
-        console.log(authUser.password);
         setBooks(userBooks);
         setFilteredBooks(userBooks);
         setIsLoading(false);

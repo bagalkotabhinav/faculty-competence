@@ -16,7 +16,7 @@ const EventDetail = () => {
   useEffect(() => {
     // Fetch the event details from the database
     const controller = new AbortController();
-    context.data.getEvent(id)
+    context.data.getEvent(id,authUser.token)
       .then(response => {
         if (response.id) {
           setEventDetail(response);
@@ -38,7 +38,7 @@ const EventDetail = () => {
 
   const handleDelete = (event) => {
     event.preventDefault();
-    context.data.deleteEvent(id, authUser.emailAddress, authUser.password)
+    context.data.deleteEvent(id, authUser.token)
       .then((response) => {
         // If the event is successfully deleted, navigate to the event list
         if (response.length) {

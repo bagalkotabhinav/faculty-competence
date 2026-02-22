@@ -17,7 +17,7 @@ const Events = () => {
 
   useEffect(() => {
     // Fetch events
-    context.data.getEvents()
+    context.data.getEvents(authUser.token)
       .then((response) => {
         const userEvents = response.filter(event => event.userid === authUser.id);
         setEvents(userEvents);

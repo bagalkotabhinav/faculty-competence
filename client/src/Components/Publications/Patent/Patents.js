@@ -16,7 +16,7 @@ const Patents = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    context.data.getPatents()
+    context.data.getPatents(authUser.token)
       .then((response) => {
         const filteredPatents = response.filter(patent => patent.userid === authUser.id);
         setPatents(filteredPatents);

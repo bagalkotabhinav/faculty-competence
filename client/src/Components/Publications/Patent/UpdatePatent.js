@@ -34,7 +34,7 @@ const UpdatePatent = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    context.data.getPatent(id)
+    context.data.getPatent(id,authUser.token)
       .then((response) => {
         if (response.error === "Sorry, we couldn't find the patent you were looking for.") {
           navigate('/notfound');
@@ -87,7 +87,7 @@ const UpdatePatent = () => {
       userid: authUser.id,
     };
 
-    context.data.updatePatent(id, updatedPatent, authUser.emailAddress, authUser.password)
+    context.data.updatePatent(id, updatedPatent, authUser.token)
       .then((response) => {
         if (response.length) {
           setErrors(response);

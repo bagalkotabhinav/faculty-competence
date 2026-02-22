@@ -7,7 +7,7 @@ const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return all conferences
-router.get('/conferences', asyncHandler(async (req, res) => {
+router.get('/conferences', authenticateJwt, asyncHandler(async (req, res) => {
   let conferences = await Conference.findAll({
     attributes: {
       exclude: ['createdAt', 'updatedAt']
@@ -23,7 +23,7 @@ router.get('/conferences', asyncHandler(async (req, res) => {
 }));
 
 // Return a specific conference
-router.get('/conferences/:id', asyncHandler(async (req, res) => {
+router.get('/conferences/:id', authenticateJwt, asyncHandler(async (req, res) => {
   const conference = await Conference.findByPk(req.params.id, {
     attributes: {
       exclude: ['createdAt', 'updatedAt']

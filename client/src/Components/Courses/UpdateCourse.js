@@ -20,7 +20,7 @@ const UpdateCourse = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    context.data.getCourse(id)
+    context.data.getCourse(id,authUser.token)
       .then((response) => {
         if (response.error === "Sorry, we couldn't find the course you were looking for.") {
           navigate('/notfound');
@@ -82,7 +82,7 @@ const UpdateCourse = () => {
       userid: authUser.id,
     };
 
-    context.data.updateCourse(id, course, authUser.emailAddress, authUser.password)
+    context.data.updateCourse(id, course, authUser.token)
       .then((response) => {
         if (response.length) {
           setErrors(response);

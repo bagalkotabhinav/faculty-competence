@@ -8,7 +8,7 @@ const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return all courses
-router.get('/courses', asyncHandler(async (req, res) => {
+router.get('/courses', authenticateJwt, asyncHandler(async (req, res) => {
   let courses = await Course.findAll({
     attributes: {
       exclude: ['createdAt', 'updatedAt']
@@ -24,7 +24,7 @@ router.get('/courses', asyncHandler(async (req, res) => {
 }));
 
 // Return a specific course
-router.get('/courses/:id', asyncHandler(async (req, res) => {
+router.get('/courses/:id', authenticateJwt, asyncHandler(async (req, res) => {
   const course = await Course.findByPk(req.params.id, {
     attributes: {
       exclude: ['createdAt', 'updatedAt']

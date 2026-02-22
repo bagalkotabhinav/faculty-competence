@@ -45,7 +45,7 @@ const CreateCourse = () => {
       userid: authUser.id,
     };
 
-    context.data.createCourse(course, authUser.emailAddress, authUser.password)
+    context.data.createCourse(course, authUser.token)
       .then(errors => {
         if (errors.length) {
           setErrors(errors);

@@ -34,7 +34,7 @@ const PatentReport = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    context.data.getPatents()
+    context.data.getPatents(authUser.token)
       .then((response) => {
         const userPatents = response.filter(patent => patent.userid === authUser.id);
         setPatents(userPatents);

@@ -15,7 +15,7 @@ const JournalDetail = () => {
   useEffect(() => {
     // Fetch the journal details from the database
     const controller = new AbortController();
-    context.data.getJournal(id)
+    context.data.getJournal(id,authUser.token)
       .then(response => {
         if (response.id) {
           setJournalDetail(response);
@@ -37,7 +37,7 @@ const JournalDetail = () => {
 
   const handleDelete = (event) => {
     event.preventDefault();
-    context.data.deleteJournal(id, authUser.emailAddress, authUser.password)
+    context.data.deleteJournal(id, authUser.token)
       .then((response) => {
         // If the journal is successfully deleted, navigate to the journal list
         if (response.length) {

@@ -14,7 +14,7 @@ const PatentDetail = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    context.data.getPatent(id)
+    context.data.getPatent(id,authUser.token)
       .then(response => {
         if (response.id) {
           setPatentDetail(response);
@@ -34,7 +34,7 @@ const PatentDetail = () => {
 
   const handleDelete = (event) => {
     event.preventDefault();
-    context.data.deletePatent(id, authUser.emailAddress, authUser.password)
+    context.data.deletePatent(id, authUser.token)
       .then((response) => {
         if (response.length) {
           navigate('/error');

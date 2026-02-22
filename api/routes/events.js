@@ -7,7 +7,7 @@ const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return all events
-router.get('/events', asyncHandler(async (req, res) => {
+router.get('/events', authenticateJwt, asyncHandler(async (req, res) => {
   let events = await Event.findAll({
     attributes: {
       exclude: ['createdAt', 'updatedAt']
@@ -23,7 +23,7 @@ router.get('/events', asyncHandler(async (req, res) => {
 }));
 
 // Return a specific event
-router.get('/events/:id', asyncHandler(async (req, res) => {
+router.get('/events/:id', authenticateJwt, asyncHandler(async (req, res) => {
   const event = await Event.findByPk(req.params.id, {
     attributes: {
       exclude: ['createdAt', 'updatedAt']

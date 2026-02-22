@@ -33,7 +33,7 @@ const UpdateUser = () => {
         }
 
         const { authenticatedUser, data } = context;
-        const response = await data.getUser(authenticatedUser.emailAddress, authenticatedUser.password);
+        const response = await data.getUser(authenticatedUser.token);
         
         if (response.id === parseInt(id)) {
           setUser(response);
@@ -68,7 +68,7 @@ const UpdateUser = () => {
       const { authenticatedUser, data } = context;
   
       // Send updated user data to the API
-      const response = await data.updateUser(id, user, authenticatedUser.emailAddress, authenticatedUser.password);
+      const response = await data.updateUser(id, user, authenticatedUser.token);
       
       if (response.length) {
         setErrors(response);

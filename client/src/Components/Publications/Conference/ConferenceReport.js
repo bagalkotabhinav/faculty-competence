@@ -34,7 +34,7 @@ const ConferenceReport = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    context.data.getConferences()
+    context.data.getConferences(authUser.token)
       .then((response) => {
         const userConferences = response.filter(conference => conference.userid === authUser.id);
         setConferences(userConferences);

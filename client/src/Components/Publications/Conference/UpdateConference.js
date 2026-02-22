@@ -21,7 +21,7 @@ const UpdateConference = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    context.data.getConference(id)
+    context.data.getConference(id,authUser.token)
       .then((response) => {
         if (response.error === "Sorry, we couldn't find the conference you were looking for.") {
           navigate('/notfound');
@@ -97,7 +97,7 @@ const UpdateConference = () => {
       userid: authUser.id,
     };
 
-    context.data.updateConference(id, updatedConference, authUser.emailAddress, authUser.password)
+    context.data.updateConference(id, updatedConference, authUser.token)
       .then((response) => {
         if (response.length) {
           setErrors(response);

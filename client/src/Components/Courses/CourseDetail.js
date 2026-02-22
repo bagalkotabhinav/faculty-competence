@@ -16,7 +16,7 @@ const CourseDetail = () => {
   useEffect(() => {
     // Fetch the course details from the database
     const controller = new AbortController();
-    context.data.getCourse(id)
+    context.data.getCourse(id,authUser.token)
       .then(response => {
         if (response.id) {
           setCourseDetail(response);
@@ -38,7 +38,7 @@ const CourseDetail = () => {
 
   const handleDelete = (event) => {
     event.preventDefault();
-    context.data.deleteCourse(id, authUser.emailAddress, authUser.password)
+    context.data.deleteCourse(id, authUser.token)
       .then((response) => {
         // If the course is successfully deleted, navigate to the homepage
         if (response.length) {

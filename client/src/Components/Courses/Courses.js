@@ -12,7 +12,7 @@ const Courses = () => {
 
   useEffect(() => {
     // Fetch courses
-    context.data.getCourses()
+    context.data.getCourses(authUser.token)
       .then((response) => {
         const filteredCourses = response.filter(course => course.userid === authUser.id);
         setCourses(filteredCourses);

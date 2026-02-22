@@ -34,7 +34,7 @@ const EventReport = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    context.data.getEvents()
+    context.data.getEvents(authUser.token)
       .then((response) => {
         const userEvents = response.filter(event => event.userid === authUser.id);
         setEvents(userEvents);

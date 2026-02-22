@@ -19,7 +19,7 @@ const UpdateBook = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    context.data.getBook(id)
+    context.data.getBook(id,authUser.token)
       .then((response) => {
         if (response.error === "Sorry, we couldn't find the book you were looking for.") {
           navigate('/notfound');
@@ -82,7 +82,7 @@ const UpdateBook = () => {
       userid: authUser.id,
     };
 
-    context.data.updateBook(id, updatedBook, authUser.emailAddress, authUser.password)
+    context.data.updateBook(id, updatedBook, authUser.token)
       .then((response) => {
         if (response.length) {
           setErrors(response);

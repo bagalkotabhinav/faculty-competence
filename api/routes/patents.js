@@ -7,7 +7,7 @@ const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
 
 // Return all patents
-router.get('/patents', asyncHandler(async (req, res) => {
+router.get('/patents', authenticateJwt, asyncHandler(async (req, res) => {
   let patents = await Patent.findAll({
     attributes: {
       exclude: ['createdAt', 'updatedAt']
@@ -23,7 +23,7 @@ router.get('/patents', asyncHandler(async (req, res) => {
 }));
 
 // Return a specific patent
-router.get('/patents/:id', asyncHandler(async (req, res) => {
+router.get('/patents/:id', authenticateJwt, asyncHandler(async (req, res) => {
   const patent = await Patent.findByPk(req.params.id, {
     attributes: {
       exclude: ['createdAt', 'updatedAt']

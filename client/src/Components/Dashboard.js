@@ -28,7 +28,7 @@ export default function Component() {
         try {
           const dataTypes = ['Courses', 'Journals', 'Books', 'Conferences', 'Patents', 'Events'];
           const fetchedData = await Promise.all(
-            dataTypes.map(type => context.data[`get${type}`]())
+            dataTypes.map(type => context.data[`get${type}`](authUser.token))
           );
 
           const filteredData = fetchedData.map((items, index) =>

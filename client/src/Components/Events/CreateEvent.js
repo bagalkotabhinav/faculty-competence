@@ -61,7 +61,7 @@ const CreateEvent = () => {
       userid: authUser.id,
     };
   
-    context.data.createEvent(eventData, authUser.emailAddress, authUser.password)
+    context.data.createEvent(eventData, authUser.token)
       .then(errors => {
         if (errors.length) {
           setErrors(errors);

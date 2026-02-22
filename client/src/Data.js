@@ -107,8 +107,8 @@ export default class Data {
    * Retrieve all courses
    * @returns {Promise<Object>} List of courses
    */
-  async getCourses() {
-    const response = await this.api('/courses', 'GET');
+  async getCourses(token) {
+    const response = await this.api('/courses', 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -121,8 +121,8 @@ export default class Data {
    * @param {String} id - Course ID
    * @returns {Promise<Object>} Course data
    */
-  async getCourse(id) {
-    const response = await this.api(`/courses/${id}`, 'GET');
+  async getCourse(id,token) {
+    const response = await this.api(`/courses/${id}`, 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -186,8 +186,8 @@ export default class Data {
    * Retrieve all events
    * @returns {Promise<Object>} List of events
    */
-  async getEvents() {
-    const response = await this.api('/events', 'GET');
+  async getEvents(token) {
+    const response = await this.api('/events', 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -200,8 +200,8 @@ export default class Data {
    * @param {String} id - Event ID
    * @returns {Promise<Object>} Event data
    */
-  async getEvent(id) {
-    const response = await this.api(`/events/${id}`, 'GET');
+  async getEvent(id,token) {
+    const response = await this.api(`/events/${id}`, 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -265,8 +265,8 @@ export default class Data {
    * Retrieve all journals
    * @returns {Promise<Object>} List of journals
    */
-  async getJournals() {
-    const response = await this.api('/journals', 'GET');
+  async getJournals(token) {
+    const response = await this.api('/journals', 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -279,8 +279,8 @@ export default class Data {
    * @param {String} id - Journal ID
    * @returns {Promise<Object>} Journal data
    */
-  async getJournal(id) {
-    const response = await this.api(`/journals/${id}`, 'GET');
+  async getJournal(id,token) {
+    const response = await this.api(`/journals/${id}`, 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -344,8 +344,8 @@ export default class Data {
    * Retrieve all conferences
    * @returns {Promise<Object>} List of conferences
    */
-  async getConferences() {
-    const response = await this.api('/conferences', 'GET');
+  async getConferences(token) {
+    const response = await this.api('/conferences', 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -358,8 +358,8 @@ export default class Data {
    * @param {String} id - Conference ID
    * @returns {Promise<Object>} Conference data
    */
-  async getConference(id) {
-    const response = await this.api(`/conferences/${id}`, 'GET');
+  async getConference(id,token) {
+    const response = await this.api(`/conferences/${id}`, 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -423,8 +423,8 @@ export default class Data {
    * Retrieve all books
    * @returns {Promise<Object>} List of books
    */
-  async getBooks() {
-    const response = await this.api('/books', 'GET');
+  async getBooks(token) {
+    const response = await this.api('/books', 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -437,8 +437,8 @@ export default class Data {
    * @param {String} id - Book ID
    * @returns {Promise<Object>} Book data
    */
-  async getBook(id) {
-    const response = await this.api(`/books/${id}`, 'GET');
+  async getBook(id,token) {
+    const response = await this.api(`/books/${id}`, 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -502,8 +502,8 @@ export default class Data {
    * Retrieve all patents
    * @returns {Promise<Object>} List of patents
    */
-  async getPatents() {
-    const response = await this.api('/patents', 'GET');
+  async getPatents(token) {
+    const response = await this.api('/patents', 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {
@@ -516,8 +516,8 @@ export default class Data {
    * @param {String} id - Patent ID
    * @returns {Promise<Object>} Patent data
    */
-  async getPatent(id) {
-    const response = await this.api(`/patents/${id}`, 'GET');
+  async getPatent(id,token) {
+    const response = await this.api(`/patents/${id}`, 'GET',null,token);
     if (response.status === 200) {
       return response.json().then(data => data);
     } else {

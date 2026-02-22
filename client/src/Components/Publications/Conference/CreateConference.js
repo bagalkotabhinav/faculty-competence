@@ -61,7 +61,7 @@ const CreateConference = () => {
       userid: authUser.id,
     };
 
-    context.data.createConference(conferenceData, authUser.emailAddress, authUser.password)
+    context.data.createConference(conferenceData, authUser.token)
       .then(errors => {
         if (errors.length) {
           setErrors(errors);

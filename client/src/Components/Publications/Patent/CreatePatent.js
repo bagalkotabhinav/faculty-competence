@@ -55,7 +55,7 @@ const CreatePatent = () => {
       userid: authUser.id,
     };
 
-    context.data.createPatent(patentData, authUser.emailAddress, authUser.password)
+    context.data.createPatent(patentData, authUser.token)
       .then(errors => {
         if (errors.length) {
           setErrors(errors);

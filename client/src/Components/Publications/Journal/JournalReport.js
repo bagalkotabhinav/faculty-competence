@@ -34,7 +34,7 @@ const JournalReport = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    context.data.getJournals()
+    context.data.getJournals(authUser.token)
       .then((response) => {
         const userJournals = response.filter(journal => journal.userid === authUser.id);
         setJournals(userJournals);

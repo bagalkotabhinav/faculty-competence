@@ -21,7 +21,7 @@ const UpdateEvent = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    context.data.getEvent(id)
+    context.data.getEvent(id,authUser.token)
       .then((response) => {
         if (response.error === "Sorry, we couldn't find the event you were looking for.") {
           navigate('/notfound');
@@ -102,7 +102,7 @@ const UpdateEvent = () => {
       userid: authUser.id,
     };
 
-    context.data.updateEvent(id, updatedEvent, authUser.emailAddress, authUser.password)
+    context.data.updateEvent(id, updatedEvent, authUser.token)
       .then((response) => {
         if (response.length) {
           setErrors(response);

@@ -17,7 +17,7 @@ const Journals = () => {
 
   useEffect(() => {
     // Fetch journals
-    context.data.getJournals()
+    context.data.getJournals(authUser.token)
       .then((response) => {
         const filteredJournals = response.filter(journal => journal.userid === authUser.id);
         setJournals(filteredJournals);

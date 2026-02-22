@@ -22,7 +22,7 @@ const UpdateJournal = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    context.data.getJournal(id)
+    context.data.getJournal(id,authUser.token)
       .then((response) => {
         if (response.error === "Sorry, we couldn't find the journal you were looking for.") {
           navigate('/notfound');
@@ -103,7 +103,7 @@ const UpdateJournal = () => {
       userid: authUser.id,
     };
 
-    context.data.updateJournal(id, updatedJournal, authUser.emailAddress, authUser.password)
+    context.data.updateJournal(id, updatedJournal, authUser.token)
       .then((response) => {
         if (response.length) {
           setErrors(response);
