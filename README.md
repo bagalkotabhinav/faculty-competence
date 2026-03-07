@@ -69,117 +69,107 @@ To test the backend API, use Postman or any other API testing tool. Import the s
   - `/models`: Sequelize models
   - `/controllers`: Request handling logic.
 
-  
+.
 ├── api
-│   ├── app.js
-│   ├── config
-│   │   └── config.js
-│   ├── middleware
-│   │   ├── async-handler.js
-│   │   └── auth-user.js
-│   ├── models
-│   │   ├── book.js
-│   │   ├── conference.js
-│   │   ├── course.js
-│   │   ├── event.js
-│   │   ├── index.js
-│   │   ├── journal.js
-│   │   ├── patent.js
-│   │   └── user.js
-│   ├── nodemon.json
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── routes
-│   │   ├── books.js
-│   │   ├── conferences.js
-│   │   ├── courses.js
-│   │   ├── events.js
-│   │   ├── journals.js
-│   │   ├── patents.js
-│   │   └── users.js
-│   └── seed
-│       ├── data.json
-│       └── seed_mysql.js
+│   ├── app.js
+│   ├── config
+│   │   └── config.js
+│   ├── middleware
+│   │   ├── async-handler.js
+│   │   ├── auth-jwt.js
+│   │   └── auth-user.js
+│   ├── models
+│   │   ├── book.js
+│   │   ├── conference.js
+│   │   ├── course.js
+│   │   ├── event.js
+│   │   ├── index.js
+│   │   ├── journal.js
+│   │   ├── patent.js
+│   │   └── user.js
+│   ├── nodemon.json
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── routes
+│   │   ├── books.js
+│   │   ├── conferences.js
+│   │   ├── courses.js
+│   │   ├── events.js
+│   │   ├── journals.js
+│   │   ├── login.js
+│   │   ├── patents.js
+│   │   ├── resourceFactory.js
+│   │   └── users.js
+│   └── seed
+│       ├── data.json
+│       └── seed_mysql.js
 ├── client
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── public
-│   │   ├── android-chrome-192x192.png
-│   │   ├── android-chrome-512x512.png
-│   │   ├── apple-touch-icon.png
-│   │   ├── favicon-16x16.png
-│   │   ├── favicon-32x32.png
-│   │   ├── favicon.ico
-│   │   ├── index.html
-│   │   ├── manifest.json
-│   │   ├── netlify.toml
-│   │   ├── robots.txt
-│   │   └── site.webmanifest
-│   ├── README.md
-│   ├── src
-│   │   ├── App.js
-│   │   ├── App.test.js
-│   │   ├── Components
-│   │   │   ├── Courses
-│   │   │   │   ├── CourseDetail.js
-│   │   │   │   ├── Courses.js
-│   │   │   │   ├── CreateCourse.js
-│   │   │   │   └── UpdateCourse.js
-│   │   │   ├── Dashboard.js
-│   │   │   ├── Errors
-│   │   │   │   ├── Forbidden.js
-│   │   │   │   ├── NotFound.js
-│   │   │   │   └── UnhandledError.js
-│   │   │   ├── Events
-│   │   │   │   ├── CreateEvent.js
-│   │   │   │   ├── EventDetail.js
-│   │   │   │   ├── EventReport.js
-│   │   │   │   ├── Events.js
-│   │   │   │   └── UpdateEvent.js
-│   │   │   ├── Header.js
-│   │   │   ├── Loading.js
-│   │   │   ├── Publications
-│   │   │   │   ├── Book
-│   │   │   │   │   ├── BookDetail.js
-│   │   │   │   │   ├── BookReport.js
-│   │   │   │   │   ├── Books.js
-│   │   │   │   │   ├── CreateBook.js
-│   │   │   │   │   └── UpdateBook.js
-│   │   │   │   ├── Conference
-│   │   │   │   │   ├── ConferenceDetail.js
-│   │   │   │   │   ├── ConferenceReport.js
-│   │   │   │   │   ├── Conferences.js
-│   │   │   │   │   ├── CreateConference.js
-│   │   │   │   │   └── UpdateConference.js
-│   │   │   │   ├── CreatePublication.js
-│   │   │   │   ├── Journal
-│   │   │   │   │   ├── CreateJournal.js
-│   │   │   │   │   ├── JournalDetail.js
-│   │   │   │   │   ├── JournalReport.js
-│   │   │   │   │   ├── Journals.js
-│   │   │   │   │   └── UpdateJournal.js
-│   │   │   │   └── Patent
-│   │   │   │       ├── CreatePatent.js
-│   │   │   │       ├── PatentDetail.js
-│   │   │   │       ├── PatentReport.js
-│   │   │   │       ├── Patents.js
-│   │   │   │       └── UpdatePatent.js
-│   │   │   └── User
-│   │   │       ├── UpdateUser.js
-│   │   │       ├── UserSignIn.js
-│   │   │       ├── UserSignOut.js
-│   │   │       └── UserSignUp.js
-│   │   ├── config.js
-│   │   ├── Context.js
-│   │   ├── Data.js
-│   │   ├── index.js
-│   │   ├── PrivateRoute.js
-│   │   ├── reportWebVitals.js
-│   │   ├── setupTests.js
-│   │   └── styles
-│   │       ├── global.css
-│   │       └── reset.css
-│   ├── tailwind.config.js
-│   └── yarn.lock
+│   ├── build
+│   │   ├── android-chrome-192x192.png
+│   │   ├── android-chrome-512x512.png
+│   │   ├── apple-touch-icon.png
+│   │   ├── assets
+│   │   │   ├── index-BEUx7j2t.css
+│   │   │   └── index-DzTL40Yq.js
+│   │   ├── favicon-16x16.png
+│   │   ├── favicon-32x32.png
+│   │   ├── favicon.ico
+│   │   ├── index.html
+│   │   ├── manifest.json
+│   │   ├── netlify.toml
+│   │   ├── robots.txt
+│   │   └── site.webmanifest
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   ├── android-chrome-192x192.png
+│   │   ├── android-chrome-512x512.png
+│   │   ├── apple-touch-icon.png
+│   │   ├── favicon-16x16.png
+│   │   ├── favicon-32x32.png
+│   │   ├── favicon.ico
+│   │   ├── index.html
+│   │   ├── manifest.json
+│   │   ├── netlify.toml
+│   │   ├── robots.txt
+│   │   └── site.webmanifest
+│   ├── README.md
+│   ├── src
+│   │   ├── App.js
+│   │   ├── components
+│   │   │   ├── dashboard
+│   │   │   │   └── Dashboard.js
+│   │   │   ├── errors
+│   │   │   │   ├── Forbidden.js
+│   │   │   │   ├── NotFound.js
+│   │   │   │   └── UnhandledError.js
+│   │   │   ├── layout
+│   │   │   │   ├── Header.js
+│   │   │   │   └── Loading.js
+│   │   │   ├── resource
+│   │   │   │   ├── ResourceDetail.js
+│   │   │   │   ├── ResourceForm.js
+│   │   │   │   ├── ResourceList.js
+│   │   │   │   └── ResourceReport.js
+│   │   │   └── user
+│   │   │       ├── UpdateUser.js
+│   │   │       ├── UserSignIn.js
+│   │   │       ├── UserSignOut.js
+│   │   │       └── UserSignUp.js
+│   │   ├── config.js
+│   │   ├── Context.js
+│   │   ├── Data.js
+│   │   ├── index.js
+│   │   ├── PrivateRoute.js
+│   │   ├── resources
+│   │   │   └── config.js
+│   │   └── styles
+│   │       ├── global.css
+│   │       └── reset.css
+│   ├── tailwind.config.js
+│   └── yarn.lock
+├── package.json
+├── package-lock.json
 └── README.md
 
+20 directories, 82 files
