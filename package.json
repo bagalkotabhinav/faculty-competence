@@ -1,0 +1,25 @@
+{
+  "name": "faculty-competence",
+  "version": "1.0.0",
+  "description": "This project is a Full Stack Web application built with React and a REST API. It serves as a platform for faculty members to manage and track their academic achievements and professional activities.",
+  "main": "index.js",
+  "scripts": {
+    "server": "cd api && npm start",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bagalkotabhinav/faculty-competence.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bagalkotabhinav/faculty-competence/issues"
+  },
+  "homepage": "https://github.com/bagalkotabhinav/faculty-competence#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
