@@ -16,6 +16,14 @@ const userRouter = require('./routes/users');
 const resourcesRouter = require('./routes/resources');
 
 // ===============================
+// Environment Validation        
+// ===============================
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET environment variable is not set. Aborting.');
+  process.exit(1);
+}
+
+// ===============================
 // App initialization
 // ===============================
 const app = express();

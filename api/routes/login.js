@@ -55,7 +55,7 @@ router.post('/login', loginLimiter, async (req, res) => {
     }
 
     // 3. Verify password
-    const isValid = bcrypt.compare(password, user.password);
+    const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
       return res.status(401).json({
