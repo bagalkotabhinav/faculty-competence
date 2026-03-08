@@ -5,6 +5,13 @@ const { User } = require('../models');
 
 const router = express.Router();
 
+const rateLimit = require("express-rate-limit");
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20
+});
+
 /**
  * POST /login
  *
@@ -24,7 +31,7 @@ const router = express.Router();
  *   "token": "jwt_token_here"
  * }
  */
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { emailAddress, password } = req.body;
 
@@ -48,7 +55,7 @@ router.post('/login', async (req, res) => {
     }
 
     // 3. Verify password
-    const isValid = bcrypt.compareSync(password, user.password);
+    const isValid = bcrypt.compare(password, user.password);
 
     if (!isValid) {
       return res.status(401).json({
@@ -58,7 +65,8 @@ router.post('/login', async (req, res) => {
 
     // 4. Create JWT payload
     const payload = {
-      sub: user.id
+      sub: user.id,
+      email: user.emailAddress
     };
 
     // 5. Sign JWT

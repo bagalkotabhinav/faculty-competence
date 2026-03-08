@@ -49,7 +49,11 @@ export class Provider extends Component {
       };
 
       this.setState({ authenticatedUser });
-      Cookies.set('authenticatedUser', authenticatedUser, { expires: 1 });
+      Cookies.set('authenticatedUser', authenticatedUser, {
+        expires: 1,
+        secure: true,
+        sameSite: 'Strict'
+      });
 
       return authenticatedUser; // keeps response.id behavior working
     }
@@ -66,7 +70,11 @@ export class Provider extends Component {
     const authenticatedUser = { ...updatedUser, token };
 
     this.setState({ authenticatedUser });
-    Cookies.set('authenticatedUser', authenticatedUser, { expires: 1 });
+    Cookies.set('authenticatedUser', authenticatedUser, {
+      expires: 1,
+      secure: true,
+      sameSite: 'Strict'
+    });
   };
 
   /**

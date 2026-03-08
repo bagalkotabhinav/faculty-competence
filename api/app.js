@@ -1,81 +1,123 @@
-// Load modules
+// ===============================
+// Imports
+// ===============================
 const express = require('express');
 const morgan = require('morgan');
-const { sequelize } = require('./models');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 
-// Variable to enable global error logging
-const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
+const { sequelize } = require('./models');
 
-// Import routes
 const loginRouter = require('./routes/login');
 const userRouter = require('./routes/users');
 const resourcesRouter = require('./routes/resources');
-// Create the Express app
-const app = express();
 
-// Setup morgan for HTTP request logging
+// ===============================
+// App initialization
+// ===============================
+const app = express();
+app.disable('x-powered-by');
+
+const PORT = process.env.PORT || 5000;
+const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
+
+// ===============================
+// Security Middleware
+// ===============================
+app.use(helmet());
+app.use(xss());
+app.use(hpp());
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 500
+});
+
+app.use('/api', apiLimiter);
+
+// ===============================
+// General Middleware
+// ===============================
 app.use(morgan('dev'));
 
-// Setup CORS
 app.use(cors({
   origin: 'http://localhost:3000',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
 }));
 
+app.use(express.json({ limit: '10kb' }));
 
-// Setup Express to work with JSON
-app.use(express.json());
-
-// Setup a friendly greeting for the root route
+// ===============================
+// Routes
+// ===============================
 app.get('/', (req, res) => {
   res.json({
-    message: 'Welcome to Faculty Competence Management System!',
+    message: 'Welcome to Faculty Competence Management System!'
   });
 });
 
-// Add routes
-app.use('/api', loginRouter); 
+app.use('/api', loginRouter);
 app.use('/api', userRouter);
 app.use('/api', resourcesRouter);
 
-// Send 404 if no other route matched
+// ===============================
+// 404 Handler
+// ===============================
 app.use((req, res) => {
   res.status(404).json({
-    message: 'Route Not Found',
+    message: 'Route Not Found'
   });
 });
 
-// Setup a global error handler
+// ===============================
+// Global Error Handler
+// ===============================
 app.use((err, req, res, next) => {
   if (enableGlobalErrorLogging) {
-    console.error(`Global error handler: ${JSON.stringify(err.stack)}`);
+    console.error(`Global error handler: ${err.stack}`);
   }
 
   res.status(err.status || 500).json({
     message: err.message,
-    error: {},
+    error: {}
   });
 });
 
-// Set our port
-app.set('port', process.env.PORT || 5000);
+// ===============================
+// Database + Server Start
+// ===============================
+let server;
 
-// Test the database connection
-(async () => {
+async function startServer() {
   try {
-    await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database: ', error);
-  }
-})();
 
-// Start listening on our port
-sequelize.sync()
-  .then(() => {
-    const server = app.listen(app.get('port'), () => {
-      console.log(`Express server is listening on port ${server.address().port}`);
+    await sequelize.authenticate();
+    console.log('Database connected.');
+
+    await sequelize.sync();
+
+    server = app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
-  });
+
+  } catch (error) {
+    console.error('Startup error:', error);
+  }
+}
+
+startServer();
+
+// ===============================
+// Graceful Shutdown
+// ===============================
+process.on('SIGINT', async () => {
+  console.log('Shutting down server...');
+  if (server) server.close();
+  await sequelize.close();
+  process.exit(0);
+});
