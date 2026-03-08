@@ -6,7 +6,6 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const xss = require('xss-clean');
 const hpp = require('hpp');
 
 const { sequelize } = require('./models');
@@ -36,7 +35,6 @@ const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'tr
 // Security Middleware
 // ===============================
 app.use(helmet());
-app.use(xss());
 app.use(hpp());
 
 const apiLimiter = rateLimit({
