@@ -10,12 +10,7 @@ const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'tr
 // Import routes
 const loginRouter = require('./routes/login');
 const userRouter = require('./routes/users');
-const courseRouter = require('./routes/courses');
-const eventRouter = require('./routes/events');
-const journalRouter = require('./routes/journals'); 
-const conferenceRouter = require('./routes/conferences'); 
-const bookRouter = require('./routes/books'); 
-const patentRouter = require('./routes/patents'); 
+const resourcesRouter = require('./routes/resources');
 // Create the Express app
 const app = express();
 
@@ -43,12 +38,7 @@ app.get('/', (req, res) => {
 // Add routes
 app.use('/api', loginRouter); 
 app.use('/api', userRouter);
-app.use('/api', courseRouter);
-app.use('/api', eventRouter); 
-app.use('/api', journalRouter); 
-app.use('/api', conferenceRouter); 
-app.use('/api', bookRouter); 
-app.use('/api', patentRouter); 
+app.use('/api', resourcesRouter);
 
 // Send 404 if no other route matched
 app.use((req, res) => {

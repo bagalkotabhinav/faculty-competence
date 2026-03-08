@@ -116,7 +116,7 @@ export default class Data {
 
   async getResources(resource, token) {
 
-    const response = await this.api(`/${resource}`, 'GET', null, token);
+    const response = await this.api(`/resources/${resource}`, 'GET', null, token);
 
     if (response.status === 200) {
       return response.json();
@@ -129,7 +129,7 @@ export default class Data {
 
   async getResource(resource, id, token) {
 
-    const response = await this.api(`/${resource}/${id}`, 'GET', null, token);
+    const response = await this.api(`/resources/${resource}/${id}`, 'GET', null, token);
 
     if (response.status === 200) {
       return response.json();
@@ -142,7 +142,7 @@ export default class Data {
 
   async createResource(resource, data, token) {
 
-    const response = await this.api(`/${resource}`, 'POST', data, token);
+    const response = await this.api(`/resources/${resource}`, 'POST', data, token);
 
     if (response.status === 201) return [];
 
@@ -158,7 +158,7 @@ export default class Data {
 
   async updateResource(resource, id, data, token) {
 
-    const response = await this.api(`/${resource}/${id}`, 'PUT', data, token);
+    const response = await this.api(`/resources/${resource}/${id}`, 'PUT', data, token);
 
     if (response.status === 204) return [];
 
@@ -174,7 +174,7 @@ export default class Data {
 
   async deleteResource(resource, id, token) {
 
-    const response = await this.api(`/${resource}/${id}`, 'DELETE', null, token);
+    const response = await this.api(`/resources/${resource}/${id}`, 'DELETE', null, token);
 
     if (response.status === 204) return [];
 
