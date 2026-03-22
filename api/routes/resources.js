@@ -1,9 +1,8 @@
+// api/routes/resources.js
 const express = require('express');
 const router = express.Router();
-
 const { authenticateJwt } = require('../middleware/auth-jwt');
 const { asyncHandler } = require('../middleware/async-handler');
-
 const db = require('../models');
 
 const resources = {
@@ -12,116 +11,101 @@ const resources = {
   journals: db.Journal,
   conferences: db.Conference,
   books: db.Book,
-  patents: db.Patent
+  patents: db.Patent,
 };
 
-/* GET ALL */
-router.get(
-  '/resources/:type',
-  authenticateJwt,
-  asyncHandler(async (req, res) => {
+// Allowlisted fields per resource — ONLY these can be written
+const allowedFields = {
+  courses: ['title', 'description', 'estimatedTime', 'materialsNeeded'],
+  events: ['title', 'description', 'eventType', 'participationType', 'eventDate', 'location'],
+  journals: ['title', 'authors', 'publicationDate', 'journal', 'volume', 'issue', 'pages', 'publisher'],
+  conferences: ['title', 'authors', 'publicationDate', 'conference', 'volume', 'issue', 'pages'],
+  books: ['title', 'authors', 'publicationDate', 'volume', 'pages'],
+  patents: ['title', 'inventors', 'publicationDate', 'patentOffice', 'patentNumber', 'applicationNumber'],
+};
 
-    const Model = resources[req.params.type];
+function pickFields(type, body) {
+  const fields = allowedFields[type] || [];
+  return Object.fromEntries(
+    Object.entries(body).filter(([k]) => fields.includes(k))
+  );
+}
 
-    if (!Model) {
-      return res.status(404).json({ message: "Invalid resource" });
-    }
+/* GET ALL — own records only */
+router.get('/resources/:type', authenticateJwt, asyncHandler(async (req, res) => {
+  const Model = resources[req.params.type];
+  if (!Model) return res.status(404).json({ message: 'Invalid resource type' });
 
-    const items = await Model.findAll({
-      where: { userid: req.currentUser.id }
-    });
+  const items = await Model.findAll({ where: { userid: req.currentUser.id } });
+  res.json(items);
+}));
 
-    res.json(items);
+/* GET ONE — own record only */
+router.get('/resources/:type/:id', authenticateJwt, asyncHandler(async (req, res) => {
+  const Model = resources[req.params.type];
+  if (!Model) return res.status(404).json({ message: 'Invalid resource type' });
 
-  })
-);
+  const item = await Model.findOne({
+    where: { id: req.params.id, userid: req.currentUser.id }
+  });
+  if (!item) return res.status(404).json({ message: 'Not found' });
 
-/* GET ONE */
-router.get(
-  '/resources/:type/:id',
-  authenticateJwt,
-  asyncHandler(async (req, res) => {
+  res.json(item);
+}));
 
-    const Model = resources[req.params.type];
+/* CREATE — userid always comes from the JWT, not the body */
+router.post('/resources/:type', authenticateJwt, asyncHandler(async (req, res) => {
+  const Model = resources[req.params.type];
+  if (!Model) return res.status(404).json({ message: 'Invalid resource type' });
 
-    const item = await Model.findOne({
-      where: {
-        id: req.params.id,
-        userid: req.currentUser.id
-      }
-    });
+  const safe = pickFields(req.params.type, req.body);
 
-    if (!item) return res.status(404).end();
-
-    res.json(item);
-
-  })
-);
-
-/* CREATE */
-router.post(
-  '/resources/:type',
-  authenticateJwt,
-  asyncHandler(async (req, res) => {
-
-    const Model = resources[req.params.type];
-
-    const newItem = await Model.create({
-      ...req.body,
-      userid: req.currentUser.id
-    });
-
+  try {
+    const newItem = await Model.create({ ...safe, userid: req.currentUser.id });
     res.status(201).location(`/resources/${req.params.type}/${newItem.id}`).end();
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({ errors: error.errors.map(e => e.message) });
+    }
+    throw error;
+  }
+}));
 
-  })
-);
+/* UPDATE — strip to allowlist, then verify ownership */
+router.put('/resources/:type/:id', authenticateJwt, asyncHandler(async (req, res) => {
+  const Model = resources[req.params.type];
+  if (!Model) return res.status(404).json({ message: 'Invalid resource type' });
 
-/* UPDATE */
-router.put(
-  '/resources/:type/:id',
-  authenticateJwt,
-  asyncHandler(async (req, res) => {
+  const item = await Model.findOne({
+    where: { id: req.params.id, userid: req.currentUser.id }
+  });
+  if (!item) return res.status(404).json({ message: 'Not found' });
 
-    const Model = resources[req.params.type];
+  const safe = pickFields(req.params.type, req.body);
 
-    const item = await Model.findOne({
-      where: {
-        id: req.params.id,
-        userid: req.currentUser.id
-      }
-    });
-
-    if (!item) return res.status(404).end();
-
-    await item.update(req.body);
-
+  try {
+    await item.update(safe);
     res.status(204).end();
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({ errors: error.errors.map(e => e.message) });
+    }
+    throw error;
+  }
+}));
 
-  })
-);
+/* DELETE — own record only */
+router.delete('/resources/:type/:id', authenticateJwt, asyncHandler(async (req, res) => {
+  const Model = resources[req.params.type];
+  if (!Model) return res.status(404).json({ message: 'Invalid resource type' });
 
-/* DELETE */
-router.delete(
-  '/resources/:type/:id',
-  authenticateJwt,
-  asyncHandler(async (req, res) => {
+  const item = await Model.findOne({
+    where: { id: req.params.id, userid: req.currentUser.id }
+  });
+  if (!item) return res.status(404).json({ message: 'Not found' });
 
-    const Model = resources[req.params.type];
-
-    const item = await Model.findOne({
-      where: {
-        id: req.params.id,
-        userid: req.currentUser.id
-      }
-    });
-
-    if (!item) return res.status(404).end();
-
-    await item.destroy();
-
-    res.status(204).end();
-
-  })
-);
+  await item.destroy();
+  res.status(204).end();
+}));
 
 module.exports = router;

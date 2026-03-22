@@ -17,11 +17,13 @@ const resourcesRouter = require('./routes/resources');
 // ===============================
 // Environment Validation        
 // ===============================
-if (!process.env.JWT_SECRET) {
-  console.error('FATAL: JWT_SECRET environment variable is not set. Aborting.');
+// api/app.js — replace the existing JWT_SECRET guard with this
+const REQUIRED_ENV = ['JWT_SECRET', 'DB_DIALECT'];
+const missing = REQUIRED_ENV.filter(k => !process.env[k]);
+if (missing.length) {
+  console.error(`FATAL: Missing required environment variables: ${missing.join(', ')}`);
   process.exit(1);
 }
-
 // ===============================
 // App initialization
 // ===============================
@@ -52,8 +54,8 @@ app.use(morgan('dev'));
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json({ limit: '10kb' }));
