@@ -1,0 +1,32 @@
+services:
+  fcms-db:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: faculty_db
+      MYSQL_ROOT_PASSWORD: abhi1502
+    networks:
+    - fcms
+  fcms-backend:
+    image: fcms-backend:1.1
+    # build: ./api
+    ports:
+    - 5000:5000
+    environment:
+     DB_USER: root
+     DB_PASS: abhi1502
+     DB_NAME: faculty_db
+     DB_HOST: fcms-db
+     DB_PORT: 3306
+     DB_DIALECT: mysql
+     JWT_SECRET: ${JWT_SECRET}
+    networks:
+    - fcms
+  fcms-frontend:
+    image: fcms-frontend:1.1
+    # build: ./client
+    ports:
+    - 3000:3000
+    networks:
+    - fcms
+networks:
+  fcms:
