@@ -10,8 +10,8 @@ services:
     networks:
     - fcms
   fcms-backend:
-    image: fcms-backend:1.2
-    # build: ./api
+    # image: fcms-backend:1.2
+    build: ./api
     ports:
     - 5000:5000
     environment:
@@ -28,8 +28,8 @@ services:
     networks:
     - fcms
   fcms-frontend:
-    image: fcms-frontend:1.1
-    # build: ./client
+    # image: fcms-frontend:1.1
+    build: ./client
     ports:
     - 3000:3000
     networks:
