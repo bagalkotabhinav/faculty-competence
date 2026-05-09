@@ -2,41 +2,44 @@ services:
   fcms-db:
     image: mysql:latest
     environment:
-      MYSQL_DATABASE: faculty_db
-      MYSQL_ROOT_PASSWORD: abhi1502
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
     volumes:
       - fcms_data:/var/lib/mysql
-      # - /home/abhinav-bagalkot/data:/var/lib/mysql
     networks:
-    - fcms
+      - fcms
+
   fcms-backend:
-    # image: fcms-backend:1.2
     build: ./api
     ports:
-    - 5000:5000
+      - 5000:5000
     environment:
-     DB_USER: root
-     DB_PASS: abhi1502
-     DB_NAME: faculty_db
-     DB_HOST: fcms-db
-     DB_PORT: 3306
-     DB_DIALECT: mysql
-     JWT_SECRET: ${JWT_SECRET}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DIALECT: ${DB_DIALECT}
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - fcms-db
     restart: always
     networks:
-    - fcms
+      - fcms
+
   fcms-frontend:
-    # image: fcms-frontend:1.1
     build: ./client
     ports:
-    - 3000:3000
+      - 3000:80
+    depends_on:
+      - fcms-backend
     networks:
-    - fcms
+      - fcms
+
 networks:
   fcms:
     name: fcms
+
 volumes:
   fcms_data:
     name: fcms_data
