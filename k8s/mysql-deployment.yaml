@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fcms-db
+  namespace: fcms
+spec:
+  selector:
+    matchLabels:
+      app: fcms-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: fcms-db
+    spec:
+      containers:
+      - image: mysql:9
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: fcms-secret
+              key: DB_PASS
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: fcms-config
+              key: DB_NAME
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: fcms-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: fcms-storage
+        persistentVolumeClaim:
+          claimName: fcms-pvc

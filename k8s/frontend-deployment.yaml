@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fcms-frontend
+  namespace: fcms
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fcms-frontend
+  template:
+    metadata:
+      labels:
+        app: fcms-frontend
+    spec:
+      containers:
+      - image: abhinavbagalkot/faculty-competence:fcms-frontend-2.1
+        name: fcms-frontend
+        ports:
+        - containerPort: 80

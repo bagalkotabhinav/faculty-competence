@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fcms-backend
+  namespace: fcms
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fcms-backend
+  template:
+    metadata:
+      labels:
+        app: fcms-backend
+    spec:
+      containers:
+      - image: abhinavbagalkot/faculty-competence:fcms-backend-2.3
+        name: fcms-backend
+        envFrom:
+        - configMapRef:
+            name: fcms-config
+        - secretRef:
+            name: fcms-secret
+        ports:
+        - containerPort: 5000

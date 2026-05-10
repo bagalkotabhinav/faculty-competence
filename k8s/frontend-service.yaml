@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fcms-frontend
+  namespace: fcms
+spec:
+  selector:
+    app: fcms-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
