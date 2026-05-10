@@ -314,7 +314,7 @@ export default function Dashboard() {
           <div className="col-span-full bg-white rounded-lg shadow p-6">
 
             <h2 className="text-xl font-semibold mb-4">
-              Cumulative Publications
+              Research Output by Year
             </h2>
 
             <ResponsiveContainer width="100%" height={400}>
@@ -326,10 +326,37 @@ export default function Dashboard() {
                 <Tooltip />
                 <Legend />
 
-                <Line type="monotone" dataKey="journals" stroke="#8884d8" />
-                <Line type="monotone" dataKey="conferences" stroke="#82ca9d" />
-                <Line type="monotone" dataKey="books" stroke="#ffc658" />
-                <Line type="monotone" dataKey="patents" stroke="#ff8042" />
+                <Line
+                  type="monotone"
+                  dataKey="journals"
+                  stroke="#8884d8"
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 8 }}
+                />
+
+                <Line
+                  type="monotone"
+                  dataKey="conferences"
+                  stroke="#82ca9d"
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 8 }}
+                />
+
+                <Line
+                  type="monotone"
+                  dataKey="books"
+                  stroke="#ffc658"
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 8 }}
+                />
+
+                <Line
+                  type="monotone"
+                  dataKey="patents"
+                  stroke="#ff8042"
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 8 }}
+                />
 
               </LineChart>
 
