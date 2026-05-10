@@ -3,3 +3,7 @@ client/node_modules
 api/node_modules
 client/build
 .env
+*secret.yaml
+*-secret.yaml
+.env
+.env.*

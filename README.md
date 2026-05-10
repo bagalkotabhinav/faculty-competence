@@ -125,3 +125,7 @@ faculty-competence/
 │           └── config.js  # Resource field definitions
 └── package.json           # Root workspace config
 ```
+
+Map cluster IP to a dummy URL for minikube
+minikube tunnel
+echo "127.0.0.1 fcms.local" | sudo tee -a /etc/hosts
