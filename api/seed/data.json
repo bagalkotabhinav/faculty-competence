@@ -1,169 +1,370 @@
 {
-    "users": [
-      {
-        "designation": "Professor",
-        "firstName": "Abhinav",
-        "lastName": "Bagalkot",
-        "emailAddress": "bagalkotabhinav@gmail.com",
-        "password": "abhi1502",
-        "affiliation": "Assistant Professor, Department of Information Science and Engineering, RVCE",
-        "areasOfInterest": "Data Science, Machine Learning, Artificial Intelligence",
-        "homepage": "https://rvce.edu.in/abhinav-bagalkot"
-      },
-      {
-        "designation": "Dr.",
-        "firstName": "Shahrukh",
-        "lastName": "Khan",
-        "emailAddress": "srk@gmail.com",
-        "password": "welcome123",
-        "affiliation": "Associate Professor, Department of Computer Science and Engineering, RVCE",
-        "areasOfInterest": "Natural Language Processing, Deep Learning, Computer Vision",
-        "homepage": "https://rvce.edu.in/shahrukh-khan"
-      }
-    ],
-    "courses": [
-      {
-        "userid": 1,
-        "title": "Introduction to Computer Science",
-        "description": "A beginner's course on computer science fundamentals.",
-        "estimatedTime": "10 hours",
-        "materialsNeeded": "Laptop, Internet Access",
-        "createdAt": "2024-01-01 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-01 00:00:00.000 +00:00"
-      },
-      {
-        "userid": 2,
-        "title": "Advanced Data Analysis",
-        "description": "An advanced course on data analysis techniques.",
-        "estimatedTime": "15 hours",
-        "materialsNeeded": "Laptop, Data Analysis Software",
-        "createdAt": "2024-01-02 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-02 00:00:00.000 +00:00"
-      }
-    ],
-    "events": [
-      {
-        "userid": 1,
-        "title": "Tech Conference 2024",
-        "description": "A conference on the latest technology trends.",
-        "eventType": "Conference",
-        "participationType": "Delivered",
-        "eventDate": "2022-05-15 00:00:00.000 +00:00",
-        "location": "Convention Center, City",
-        "createdAt": "2024-01-01 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-01 00:00:00.000 +00:00"
-      },
-      {
-        "userid": 2,
-        "title": "Data Science Workshop",
-        "description": "A workshop on data science methodologies.",
-        "eventType": "Workshop",
-        "participationType": "Attended",
-        "eventDate": "2021-06-20 00:00:00.000 +00:00",
-        "location": "Tech Hub, City",
-        "createdAt": "2024-01-02 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-02 00:00:00.000 +00:00"
-      }
-    ],
-    "journals": [
-      {
-        "userid": 1,
-        "title": "Advances in AI",
-        "authors": "Abhinav Bagalkot",
-        "publicationDate": "2023-03-01 00:00:00.000 +00:00",
-        "journal": "Journal of Artificial Intelligence",
-        "volume": "12",
-        "issue": "3",
-        "pages": "45-67",
-        "publisher": "Tech Publishers",
-        "createdAt": "2024-01-01 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-01 00:00:00.000 +00:00"
-      },
-      {
-        "userid": 2,
-        "title": "Data Science Innovations",
-        "authors": "Shahrukh Khan",
-        "publicationDate": "2022-04-10 00:00:00.000 +00:00",
-        "journal": "Journal of Data Science",
-        "volume": "8",
-        "issue": "2",
-        "pages": "12-25",
-        "publisher": "Data Publications",
-        "createdAt": "2024-01-02 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-02 00:00:00.000 +00:00"
-      }
-    ],
-    "conferences": [
-      {
-        "userid": 1,
-        "title": "International Conference on Robotics",
-        "authors": "Abhinav Bagalkot",
-        "publicationDate": "2021-04-20 00:00:00.000 +00:00",
-        "conference": "ICR 2024",
-        "volume": "5",
-        "issue": "2",
-        "pages": "123-134",
-        "createdAt": "2024-01-01 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-01 00:00:00.000 +00:00"
-      },
-      {
-        "userid": 2,
-        "title": "AI for Healthcare Conference",
-        "authors": "Shahrukh Khan",
-        "publicationDate": "2023-05-25 00:00:00.000 +00:00",
-        "conference": "AIC 2024",
-        "volume": "2",
-        "issue": "1",
-        "pages": "45-56",
-        "createdAt": "2024-01-02 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-02 00:00:00.000 +00:00"
-      }
-    ],
-    "books": [
-      {
-        "userid": 1,
-        "title": "Mastering Data Science",
-        "authors": "Abhinav Bagalkot",
-        "publicationDate": "2024-02-01 00:00:00.000 +00:00",
-        "volume": "1",
-        "pages": "200",
-        "createdAt": "2024-01-01 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-01 00:00:00.000 +00:00"
-      },
-      {
-        "userid": 2,
-        "title": "Comprehensive Guide to Data Analysis",
-        "authors": "Shahrukh Khan",
-        "publicationDate": "2024-03-15 00:00:00.000 +00:00",
-        "volume": "2",
-        "pages": "350",
-        "createdAt": "2024-01-02 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-02 00:00:00.000 +00:00"
-      }
-    ],
-    "patents": [
-      {
-        "userid": 1,
-        "title": "Innovative AI Algorithm",
-        "inventors": "Abhinav Bagalkot",
-        "publicationDate": "2022-06-01 00:00:00.000 +00:00",
-        "patentOffice": "CGPDTM",
-        "patentNumber": "IND1234567",
-        "applicationNumber": "IND1234567A1",
-        "createdAt": "2024-01-01 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-01 00:00:00.000 +00:00"
-      },
-      {
-        "userid": 2,
-        "title": "Novel Data Compression Technique",
-        "inventors": "Shahrukh Khan",
-        "publicationDate": "2021-07-10 00:00:00.000 +00:00",
-        "patentOffice": "CGPDTM",
-        "patentNumber": "IND7654321",
-        "applicationNumber": "IND7654321A1",
-        "createdAt": "2024-01-02 00:00:00.000 +00:00",
-        "updatedAt": "2024-01-02 00:00:00.000 +00:00"
-      }
-    ]
-  }
-  
+  "users": [
+    {
+      "designation": "Professor",
+      "firstName": "Abhinav",
+      "lastName": "Bagalkot",
+      "emailAddress": "bagalkotabhinav@gmail.com",
+      "password": "abhi1502",
+      "affiliation": "Assistant Professor, Department of Information Science and Engineering, RVCE",
+      "areasOfInterest": "Data Science, Machine Learning, Artificial Intelligence",
+      "homepage": "https://rvce.edu.in/abhinav-bagalkot"
+    }
+  ],
+
+  "courses": [
+    {
+      "userid": 1,
+      "title": "Introduction to Computer Science",
+      "description": "Foundational computer science concepts.",
+      "estimatedTime": "10 hours",
+      "materialsNeeded": "Laptop",
+      "createdAt": "2023-01-15 00:00:00.000 +00:00",
+      "updatedAt": "2023-01-15 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Python for Data Analytics",
+      "description": "Practical data analytics using Python.",
+      "estimatedTime": "14 hours",
+      "materialsNeeded": "Python, Jupyter Notebook",
+      "createdAt": "2023-06-10 00:00:00.000 +00:00",
+      "updatedAt": "2023-06-10 00:00:00.000 +00:00"
+    },
+
+    {
+      "userid": 1,
+      "title": "Machine Learning Fundamentals",
+      "description": "Core ML concepts and algorithms.",
+      "estimatedTime": "18 hours",
+      "materialsNeeded": "Laptop, Python",
+      "createdAt": "2024-02-11 00:00:00.000 +00:00",
+      "updatedAt": "2024-02-11 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Deep Learning with TensorFlow",
+      "description": "Hands-on deep learning course.",
+      "estimatedTime": "20 hours",
+      "materialsNeeded": "TensorFlow",
+      "createdAt": "2024-07-18 00:00:00.000 +00:00",
+      "updatedAt": "2024-07-18 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Applied Statistics",
+      "description": "Statistics for engineering applications.",
+      "estimatedTime": "12 hours",
+      "materialsNeeded": "Calculator",
+      "createdAt": "2024-11-02 00:00:00.000 +00:00",
+      "updatedAt": "2024-11-02 00:00:00.000 +00:00"
+    },
+
+    {
+      "userid": 1,
+      "title": "AI for Healthcare",
+      "description": "Applications of AI in healthcare systems.",
+      "estimatedTime": "16 hours",
+      "materialsNeeded": "Laptop",
+      "createdAt": "2025-01-22 00:00:00.000 +00:00",
+      "updatedAt": "2025-01-22 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Natural Language Processing",
+      "description": "Modern NLP techniques.",
+      "estimatedTime": "15 hours",
+      "materialsNeeded": "Python",
+      "createdAt": "2025-04-15 00:00:00.000 +00:00",
+      "updatedAt": "2025-04-15 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Big Data Engineering",
+      "description": "Distributed systems and big data.",
+      "estimatedTime": "22 hours",
+      "materialsNeeded": "Spark, Hadoop",
+      "createdAt": "2025-08-12 00:00:00.000 +00:00",
+      "updatedAt": "2025-08-12 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Computer Vision Essentials",
+      "description": "Image processing and computer vision.",
+      "estimatedTime": "17 hours",
+      "materialsNeeded": "OpenCV",
+      "createdAt": "2025-10-09 00:00:00.000 +00:00",
+      "updatedAt": "2025-10-09 00:00:00.000 +00:00"
+    },
+
+    {
+      "userid": 1,
+      "title": "Generative AI Systems",
+      "description": "Modern GenAI architectures.",
+      "estimatedTime": "25 hours",
+      "materialsNeeded": "GPU",
+      "createdAt": "2026-02-03 00:00:00.000 +00:00",
+      "updatedAt": "2026-02-03 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Advanced Reinforcement Learning",
+      "description": "RL algorithms and simulations.",
+      "estimatedTime": "24 hours",
+      "materialsNeeded": "Python",
+      "createdAt": "2026-04-19 00:00:00.000 +00:00",
+      "updatedAt": "2026-04-19 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Cloud Native Engineering",
+      "description": "Kubernetes and cloud systems.",
+      "estimatedTime": "21 hours",
+      "materialsNeeded": "Docker, Kubernetes",
+      "createdAt": "2026-07-08 00:00:00.000 +00:00",
+      "updatedAt": "2026-07-08 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Responsible AI",
+      "description": "Ethics and governance in AI.",
+      "estimatedTime": "10 hours",
+      "materialsNeeded": "Research Papers",
+      "createdAt": "2026-09-14 00:00:00.000 +00:00",
+      "updatedAt": "2026-09-14 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "MLOps in Production",
+      "description": "Deploying ML systems at scale.",
+      "estimatedTime": "18 hours",
+      "materialsNeeded": "Kubeflow",
+      "createdAt": "2026-11-01 00:00:00.000 +00:00",
+      "updatedAt": "2026-11-01 00:00:00.000 +00:00"
+    }
+  ],
+
+  "journals": [
+    {
+      "userid": 1,
+      "title": "AI in Smart Education",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2023-02-10 00:00:00.000 +00:00",
+      "journal": "Journal of AI Research",
+      "volume": "10",
+      "issue": "1",
+      "pages": "10-22",
+      "publisher": "Springer",
+      "createdAt": "2023-02-10 00:00:00.000 +00:00",
+      "updatedAt": "2023-02-10 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "ML in Agriculture",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2023-08-21 00:00:00.000 +00:00",
+      "journal": "International Journal of ML",
+      "volume": "11",
+      "issue": "2",
+      "pages": "45-59",
+      "publisher": "Elsevier",
+      "createdAt": "2023-08-21 00:00:00.000 +00:00",
+      "updatedAt": "2023-08-21 00:00:00.000 +00:00"
+    },
+
+    {
+      "userid": 1,
+      "title": "Deep Learning Optimization",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2024-01-12 00:00:00.000 +00:00",
+      "journal": "Journal of Deep Learning",
+      "volume": "14",
+      "issue": "1",
+      "pages": "61-78",
+      "publisher": "IEEE",
+      "createdAt": "2024-01-12 00:00:00.000 +00:00",
+      "updatedAt": "2024-01-12 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Vision Transformers",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2024-04-09 00:00:00.000 +00:00",
+      "journal": "Computer Vision Journal",
+      "volume": "15",
+      "issue": "3",
+      "pages": "100-119",
+      "publisher": "ACM",
+      "createdAt": "2024-04-09 00:00:00.000 +00:00",
+      "updatedAt": "2024-04-09 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Explainable AI Frameworks",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2024-07-18 00:00:00.000 +00:00",
+      "journal": "AI Ethics Review",
+      "volume": "7",
+      "issue": "2",
+      "pages": "22-35",
+      "publisher": "Springer",
+      "createdAt": "2024-07-18 00:00:00.000 +00:00",
+      "updatedAt": "2024-07-18 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Cloud AI Architectures",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2024-11-11 00:00:00.000 +00:00",
+      "journal": "Cloud Systems Journal",
+      "volume": "8",
+      "issue": "4",
+      "pages": "80-94",
+      "publisher": "Elsevier",
+      "createdAt": "2024-11-11 00:00:00.000 +00:00",
+      "updatedAt": "2024-11-11 00:00:00.000 +00:00"
+    }
+  ],
+
+  "conferences": [
+    {
+      "userid": 1,
+      "title": "AI for Smart Cities",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2023-03-15 00:00:00.000 +00:00",
+      "conference": "IEEE SmartTech 2023",
+      "volume": "1",
+      "issue": "1",
+      "pages": "11-20",
+      "createdAt": "2023-03-15 00:00:00.000 +00:00",
+      "updatedAt": "2023-03-15 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "NLP for Regional Languages",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2024-05-20 00:00:00.000 +00:00",
+      "conference": "ACL India 2024",
+      "volume": "2",
+      "issue": "1",
+      "pages": "31-42",
+      "createdAt": "2024-05-20 00:00:00.000 +00:00",
+      "updatedAt": "2024-05-20 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Distributed ML Systems",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2025-02-10 00:00:00.000 +00:00",
+      "conference": "KubeAI Summit 2025",
+      "volume": "3",
+      "issue": "2",
+      "pages": "55-67",
+      "createdAt": "2025-02-10 00:00:00.000 +00:00",
+      "updatedAt": "2025-02-10 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Generative AI Pipelines",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2025-09-14 00:00:00.000 +00:00",
+      "conference": "GenAI World Congress",
+      "volume": "4",
+      "issue": "1",
+      "pages": "101-118",
+      "createdAt": "2025-09-14 00:00:00.000 +00:00",
+      "updatedAt": "2025-09-14 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Ethical AI Governance",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2026-04-28 00:00:00.000 +00:00",
+      "conference": "Responsible AI Summit",
+      "volume": "5",
+      "issue": "3",
+      "pages": "210-228",
+      "createdAt": "2026-04-28 00:00:00.000 +00:00",
+      "updatedAt": "2026-04-28 00:00:00.000 +00:00"
+    }
+  ],
+
+  "books": [
+    {
+      "userid": 1,
+      "title": "Practical Machine Learning",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2023-07-10 00:00:00.000 +00:00",
+      "volume": "1",
+      "pages": "220",
+      "createdAt": "2023-07-10 00:00:00.000 +00:00",
+      "updatedAt": "2023-07-10 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Deep Learning Systems",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2024-06-18 00:00:00.000 +00:00",
+      "volume": "2",
+      "pages": "340",
+      "createdAt": "2024-06-18 00:00:00.000 +00:00",
+      "updatedAt": "2024-06-18 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Cloud Native AI",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2025-08-08 00:00:00.000 +00:00",
+      "volume": "3",
+      "pages": "410",
+      "createdAt": "2025-08-08 00:00:00.000 +00:00",
+      "updatedAt": "2025-08-08 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Generative AI Engineering",
+      "authors": "Abhinav Bagalkot",
+      "publicationDate": "2026-03-14 00:00:00.000 +00:00",
+      "volume": "4",
+      "pages": "500",
+      "createdAt": "2026-03-14 00:00:00.000 +00:00",
+      "updatedAt": "2026-03-14 00:00:00.000 +00:00"
+    }
+  ],
+
+  "patents": [
+    {
+      "userid": 1,
+      "title": "AI Based Attendance System",
+      "inventors": "Abhinav Bagalkot",
+      "publicationDate": "2024-09-10 00:00:00.000 +00:00",
+      "patentOffice": "CGPDTM",
+      "patentNumber": "IND2024001",
+      "applicationNumber": "IND2024001A1",
+      "createdAt": "2024-09-10 00:00:00.000 +00:00",
+      "updatedAt": "2024-09-10 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Smart Research Recommendation Engine",
+      "inventors": "Abhinav Bagalkot",
+      "publicationDate": "2025-11-18 00:00:00.000 +00:00",
+      "patentOffice": "CGPDTM",
+      "patentNumber": "IND2025002",
+      "applicationNumber": "IND2025002A1",
+      "createdAt": "2025-11-18 00:00:00.000 +00:00",
+      "updatedAt": "2025-11-18 00:00:00.000 +00:00"
+    },
+    {
+      "userid": 1,
+      "title": "Adaptive AI Tutoring Platform",
+      "inventors": "Abhinav Bagalkot",
+      "publicationDate": "2026-10-05 00:00:00.000 +00:00",
+      "patentOffice": "CGPDTM",
+      "patentNumber": "IND2026003",
+      "applicationNumber": "IND2026003A1",
+      "createdAt": "2026-10-05 00:00:00.000 +00:00",
+      "updatedAt": "2026-10-05 00:00:00.000 +00:00"
+    }
+  ]
+}
