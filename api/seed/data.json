@@ -366,5 +366,96 @@
       "createdAt": "2026-10-05 00:00:00.000 +00:00",
       "updatedAt": "2026-10-05 00:00:00.000 +00:00"
     }
-  ]
+  ],
+
+  "events": [
+  {
+    "userid": 1,
+    "title": "AI Summit 2023",
+    "description": "Presented research on AI-driven education systems.",
+    "eventType": "Conference",
+    "participationType": "Presented",
+    "eventDate": "2023-03-15 00:00:00.000 +00:00",
+    "location": "Bangalore",
+    "createdAt": "2023-03-15 00:00:00.000 +00:00",
+    "updatedAt": "2023-03-15 00:00:00.000 +00:00"
+  },
+  {
+    "userid": 1,
+    "title": "ML Research Workshop",
+    "description": "Hands-on workshop on machine learning pipelines.",
+    "eventType": "Workshop",
+    "participationType": "Conducted",
+    "eventDate": "2023-08-10 00:00:00.000 +00:00",
+    "location": "Mysore",
+    "createdAt": "2023-08-10 00:00:00.000 +00:00",
+    "updatedAt": "2023-08-10 00:00:00.000 +00:00"
+  },
+  {
+    "userid": 1,
+    "title": "Deep Learning Expo",
+    "description": "Delivered keynote on deep learning systems.",
+    "eventType": "Conference",
+    "participationType": "Keynote Speaker",
+    "eventDate": "2024-04-20 00:00:00.000 +00:00",
+    "location": "Hyderabad",
+    "createdAt": "2024-04-20 00:00:00.000 +00:00",
+    "updatedAt": "2024-04-20 00:00:00.000 +00:00"
+  },
+  {
+    "userid": 1,
+    "title": "Cloud AI Symposium",
+    "description": "Presented scalable AI infrastructure models.",
+    "eventType": "Symposium",
+    "participationType": "Presented",
+    "eventDate": "2024-11-12 00:00:00.000 +00:00",
+    "location": "Chennai",
+    "createdAt": "2024-11-12 00:00:00.000 +00:00",
+    "updatedAt": "2024-11-12 00:00:00.000 +00:00"
+  },
+  {
+    "userid": 1,
+    "title": "Generative AI Conclave",
+    "description": "Panel discussion on GenAI applications.",
+    "eventType": "Conference",
+    "participationType": "Panelist",
+    "eventDate": "2025-06-18 00:00:00.000 +00:00",
+    "location": "Mumbai",
+    "createdAt": "2025-06-18 00:00:00.000 +00:00",
+    "updatedAt": "2025-06-18 00:00:00.000 +00:00"
+  },
+  {
+    "userid": 1,
+    "title": "Kubernetes for AI Workshop",
+    "description": "Workshop on deploying AI systems using Kubernetes.",
+    "eventType": "Workshop",
+    "participationType": "Conducted",
+    "eventDate": "2025-09-05 00:00:00.000 +00:00",
+    "location": "Pune",
+    "createdAt": "2025-09-05 00:00:00.000 +00:00",
+    "updatedAt": "2025-09-05 00:00:00.000 +00:00"
+  },
+  {
+    "userid": 1,
+    "title": "Responsible AI Forum",
+    "description": "Discussion on ethics and governance in AI.",
+    "eventType": "Forum",
+    "participationType": "Speaker",
+    "eventDate": "2026-02-14 00:00:00.000 +00:00",
+    "location": "Delhi",
+    "createdAt": "2026-02-14 00:00:00.000 +00:00",
+    "updatedAt": "2026-02-14 00:00:00.000 +00:00"
+  },
+  {
+    "userid": 1,
+    "title": "Future of AI Education Summit",
+    "description": "Presented AI-enabled education systems.",
+    "eventType": "Summit",
+    "participationType": "Presented",
+    "eventDate": "2026-10-22 00:00:00.000 +00:00",
+    "location": "Bangalore",
+    "createdAt": "2026-10-22 00:00:00.000 +00:00",
+    "updatedAt": "2026-10-22 00:00:00.000 +00:00"
+  }
+]
 }
