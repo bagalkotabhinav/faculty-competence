@@ -4,6 +4,7 @@ metadata:
   name: fcms-db
   namespace: fcms
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: fcms-db
