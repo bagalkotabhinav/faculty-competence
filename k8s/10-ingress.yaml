@@ -6,7 +6,8 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - http:
+  - host: fcms.local
+    http:
       paths:
       - path: /api
         pathType: Prefix
