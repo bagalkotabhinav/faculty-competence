@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:24-alpine
 WORKDIR /api
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
