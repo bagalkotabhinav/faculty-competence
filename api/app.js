@@ -1,43 +1,60 @@
-// ===============================
-// Imports
-// ===============================
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
+const { setTimeout: delay } = require('node:timers/promises');
+const config = require('./config/runtime');
+
+if (config.missing.length) {
+  console.error(JSON.stringify({
+    level: 'fatal',
+    event: 'missing_configuration',
+    variables: config.missing
+  }));
+  process.exit(1);
+}
 
 const { sequelize } = require('./models');
-
 const loginRouter = require('./routes/login');
 const userRouter = require('./routes/users');
 const resourcesRouter = require('./routes/resources');
 
-// ===============================
-// Environment Validation        
-// ===============================
-// api/app.js — replace the existing JWT_SECRET guard with this
-const REQUIRED_ENV = ['JWT_SECRET', 'DB_DIALECT'];
-const missing = REQUIRED_ENV.filter(k => !process.env[k]);
-if (missing.length) {
-  console.error(`FATAL: Missing required environment variables: ${missing.join(', ')}`);
-  process.exit(1);
-}
-// ===============================
-// App initialization
-// ===============================
 const app = express();
 app.disable('x-powered-by');
+app.set('trust proxy', config.app.trustProxy);
 
-const PORT = process.env.PORT || 5000;
-const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
-
-// ===============================
-// Security Middleware
-// ===============================
 app.use(helmet());
 app.use(hpp());
+
+// Avoid logging query strings, which may contain sensitive values.
+app.use(morgan((tokens, req, res) => JSON.stringify({
+  timestamp: new Date().toISOString(),
+  method: tokens.method(req, res),
+  path: req.path,
+  status: Number(tokens.status(req, res)),
+  durationMs: Number(tokens['response-time'](req, res))
+})));
+
+const liveness = (req, res) => {
+  res.status(200).json({ status: 'ok' });
+};
+app.get('/health', liveness);
+app.get('/health/live', liveness);
+
+app.get('/health/ready', async (req, res) => {
+  if (shuttingDown) {
+    return res.status(503).json({ status: 'unavailable' });
+  }
+
+  try {
+    await sequelize.query('SELECT 1');
+    return res.status(200).json({ status: 'ready' });
+  } catch {
+    return res.status(503).json({ status: 'unavailable' });
+  }
+});
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -46,23 +63,18 @@ const apiLimiter = rateLimit({
 
 app.use('/api', apiLimiter);
 
-// ===============================
-// General Middleware
-// ===============================
-app.use(morgan('dev'));
-
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+if (config.corsOrigins.length > 0) {
+  app.use(cors({
+    origin: (origin, callback) => {
+      callback(null, !origin || config.corsOrigins.includes(origin));
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
+}
 
 app.use(express.json({ limit: '10kb' }));
 
-// ===============================
-// Routes
-// ===============================
 app.get('/', (req, res) => {
   res.json({
     message: 'Welcome to Faculty Competence Management System!'
@@ -73,59 +85,116 @@ app.use('/api', loginRouter);
 app.use('/api', userRouter);
 app.use('/api', resourcesRouter);
 
-// ===============================
-// 404 Handler
-// ===============================
 app.use((req, res) => {
   res.status(404).json({
     message: 'Route Not Found'
   });
 });
 
-// ===============================
-// Global Error Handler
-// ===============================
 app.use((err, req, res, next) => {
-  if (enableGlobalErrorLogging) {
-    console.error(`Global error handler: ${err.stack}`);
-  }
+  const status = err.status || err.statusCode || 500;
+  log('error', 'api_request_failed', {
+    name: err.name,
+    code: err.original?.code || err.parent?.code,
+    method: req.method,
+    path: req.path,
+    status
+  });
 
-  res.status(err.status || 500).json({
-    message: err.message,
-    error: {}
+  res.status(status >= 400 && status < 600 ? status : 500).json({
+    message: status < 500 ? 'Invalid request' : 'Internal server error'
   });
 });
 
-// ===============================
-// Database + Server Start
-// ===============================
 let server;
+let shuttingDown = false;
+
+function log(level, event, details = {}) {
+  const output = JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level,
+    event,
+    ...details
+  });
+  console[level === 'fatal' || level === 'error' ? 'error' : 'log'](output);
+}
+
+async function authenticateWithRetry() {
+  let lastError;
+
+  for (let attempt = 1; attempt <= config.database.connectAttempts; attempt += 1) {
+    try {
+      await sequelize.authenticate();
+      log('info', 'database_connected');
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt === config.database.connectAttempts || shuttingDown) break;
+
+      const waitMs = Math.min(
+        config.database.retryDelayMs * (2 ** (attempt - 1)),
+        config.database.retryMaxDelayMs
+      );
+      log('warn', 'database_connection_retry', {
+        attempt,
+        waitMs,
+        name: error.name,
+        code: error.original?.code || error.parent?.code
+      });
+      await delay(waitMs);
+    }
+  }
+
+  throw lastError;
+}
 
 async function startServer() {
   try {
+    await authenticateWithRetry();
+    if (shuttingDown) {
+      await sequelize.close();
+      return;
+    }
 
-    await sequelize.authenticate();
-    console.log('Database connected.');
-
-    await sequelize.sync();
-
-    server = app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+    server = app.listen(config.app.port, config.app.host, () => {
+      log('info', 'server_started', {
+        host: config.app.host,
+        port: config.app.port
+      });
     });
-
   } catch (error) {
-    console.error('Startup error:', error);
+    if (shuttingDown) return;
+    log('fatal', 'startup_failed', {
+      name: error.name,
+      code: error.original?.code || error.parent?.code
+    });
+    await sequelize.close().catch(closeError => {
+      log('error', 'database_close_after_startup_failure', { name: closeError.name });
+    });
+    process.exit(1);
   }
 }
 
-startServer();
+async function shutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  log('info', 'shutdown_started', { signal });
 
-// ===============================
-// Graceful Shutdown
-// ===============================
-process.on('SIGINT', async () => {
-  console.log('Shutting down server...');
-  if (server) server.close();
-  await sequelize.close();
-  process.exit(0);
-});
+  try {
+    if (server) {
+      await new Promise((resolve, reject) => {
+        server.close(error => error ? reject(error) : resolve());
+      });
+    }
+    await sequelize.close();
+    process.exitCode = 0;
+  } catch (error) {
+    log('error', 'shutdown_failed', { name: error.name });
+    process.exitCode = 1;
+  }
+}
+
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+
+startServer();

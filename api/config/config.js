@@ -1,28 +1,25 @@
-require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+const runtime = require('./runtime');
+const db = runtime.database;
+
+const dialectOptions = db.ssl
+  ? {
+      ssl: {
+        ca: fs.readFileSync(path.resolve(db.sslCaPath), 'utf8'),
+        rejectUnauthorized: true
+      }
+    }
+  : {};
 
 module.exports = {
-  development: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: process.env.DB_DIALECT
-  },
-  test: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: process.env.DB_DIALECT
-  },
-  production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: process.env.DB_DIALECT
-  }
+  username: db.user,
+  password: db.password,
+  database: db.name,
+  host: db.host,
+  port: db.port,
+  dialect: db.dialect,
+  logging: db.logging ? console.log : false,
+  pool: db.pool,
+  dialectOptions
 };

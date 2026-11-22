@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
+const runtime = require('../config/runtime');
 
 /**
  * JWT Authentication Middleware
@@ -30,7 +31,7 @@ exports.authenticateJwt = async (req, res, next) => {
     const token = parts[1];
 
     // 3. Verify JWT signature & expiry
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = jwt.verify(token, runtime.jwtSecret);
 
     /**
      * Payload structure (from login route):

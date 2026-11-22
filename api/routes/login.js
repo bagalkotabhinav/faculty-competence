@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
+const runtime = require('../config/runtime');
 
 const router = express.Router();
 
@@ -72,7 +73,7 @@ router.post('/login', loginLimiter, async (req, res) => {
     // 5. Sign JWT
     const token = jwt.sign(
       payload,
-      process.env.JWT_SECRET,
+      runtime.jwtSecret,
       { expiresIn: '1h' }
     );
 
@@ -91,7 +92,13 @@ router.post('/login', loginLimiter, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Login error:', error);
+    console.error(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: 'error',
+      event: 'login_request_failed',
+      name: error.name,
+      code: error.original?.code || error.parent?.code
+    }));
     res.status(500).json({
       message: 'Internal server error'
     });

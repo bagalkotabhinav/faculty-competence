@@ -3,7 +3,10 @@ client/node_modules
 api/node_modules
 client/build
 .env
+database/.env
+database/liquibase/lib/*.jar
 *secret.yaml
 *-secret.yaml
 .env
 .env.*
+lib/
