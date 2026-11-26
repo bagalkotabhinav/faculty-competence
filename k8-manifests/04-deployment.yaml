@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: fcms-deploy
+  name: fcms-deploy
+  namespace: fcms
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fcms-deploy
+  template:
+    metadata:
+      labels:
+        app: fcms-deploy
+    spec:
+      containers:
+      - image: fcms-backend:1.0
+        name: fcms-backend
+        envFrom:
+          - configMapRef:
+              name: fcms-config
+          - secretRef:
+              name: fcms-secret
