@@ -8,5 +8,5 @@ database/liquibase/lib/*.jar
 *secret.yaml
 *-secret.yaml
 .env
-.env.*
+.env.secret
 lib/
