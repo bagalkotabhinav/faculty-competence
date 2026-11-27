@@ -1,16 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    app: fcms-service
   name: fcms-service
   namespace: fcms
+# details about this service
 spec:
   type: NodePort
+  # this service will map to pods having this label (spec.template.metadata in deployment must match)
   selector:
     app: fcms-deploy
+  #ports configuration
   ports:
   - name: fcms-backend
-    port: 5000
     protocol: TCP
+    port: 5000
     targetPort: 5000

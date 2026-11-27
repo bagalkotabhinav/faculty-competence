@@ -1,19 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: fcms-deploy
   name: fcms-deploy
   namespace: fcms
+# details about this deployment
 spec:
   replicas: 2
+  # this deployment will manage pods with this label. must match label with template
   selector:
     matchLabels:
       app: fcms-deploy
   template:
+    # stamp all pods this deployment will create with the below label
     metadata:
       labels:
         app: fcms-deploy
+    # each pod will run container with the below details
     spec:
       containers:
       - image: fcms-backend:1.0
