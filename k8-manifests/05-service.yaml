@@ -6,11 +6,11 @@ metadata:
   name: fcms-service
   namespace: fcms
 spec:
+  type: NodePort
+  selector:
+    app: fcms-deploy
   ports:
   - name: fcms-backend
     port: 5000
     protocol: TCP
     targetPort: 5000
-  selector:
-    app: fcms-deploy
-  type: NodePort
